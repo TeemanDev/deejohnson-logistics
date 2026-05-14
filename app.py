@@ -454,5 +454,10 @@ def detect_courier_ajax():
 # For Render deployment
 application = app
 
+@app.route('/health')
+def health():
+    """Lightweight health check endpoint for cron-job.org"""
+    return "OK", 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
