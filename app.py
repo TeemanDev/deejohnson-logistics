@@ -274,6 +274,12 @@ def track():
                          get_courier_icon=get_courier_icon,
                          get_courier_color=get_courier_color)
 
+# ✅ ADD GOOGLE VERIFICATION ROUTE HERE
+@app.route('/google79bcbfa2d09351d4.html')
+def google_verify():
+    from flask import send_from_directory
+    return send_from_directory('static', 'google79bcbfa2d09351d4.html')                         
+
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     # Check if admin exists, if not create one
