@@ -134,3 +134,61 @@ video {
         height: 200px;
     }
 }
+
+/* Modal Styles */
+.modal-content {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-body h5 {
+    color: var(--navy-deep);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.modal-body ul, .modal-body ol {
+    padding-left: 20px;
+    line-height: 1.8;
+}
+
+.modal-body li {
+    margin-bottom: 8px;
+}
+
+.modal-body hr {
+    margin: 20px 0;
+    opacity: 0.5;
+}
+
+.modal-footer {
+    border-top: 1px solid #eee;
+    padding: 15px 20px;
+}
+
+.modal-footer .btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+}
+
+.modal-footer .btn-primary {
+    background-color: var(--navy-medium);
+    border: none;
+}
+
+.modal-footer .btn-primary:hover {
+    background-color: var(--navy-deep);
+}
+
+.modal-footer .btn-success {
+    background-color: #25D366;
+    border: none;
+}
+
+.modal-footer .btn-success:hover {
+    background-color: #128C7E;
+}
