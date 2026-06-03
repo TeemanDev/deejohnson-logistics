@@ -602,7 +602,7 @@ def restore_shipment():
         destination="Wolverhampton, United Kingdom",
         package_type="Parcel",
         package_weight=10.0,
-        estimated_delivery="June 10, 2026",
+        estimated_delivery="June 4, 2026",
         status="Picked up from customer",
         current_location="Ibadan",
         last_update=datetime.utcnow()
