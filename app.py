@@ -6,6 +6,14 @@ import string
 import hashlib
 import os
 from functools import wraps
+from export_reports import (
+    export_all_shipments, 
+    export_outgoing_shipments, 
+    export_incoming_shipments,
+    export_delivered_shipments,
+    export_pending_shipments,
+    export_customers
+)
 
 app = Flask(__name__)
 app.secret_key = 'deejohnson_super_secret_key_2024'
@@ -59,6 +67,16 @@ class Shipment(db.Model):
     partner_tracking = db.Column(db.String(50))
     notes = db.Column(db.Text)
     notification_sent = db.Column(db.Boolean, default=False)
+    
+    # NEW FIELDS FOR INCOMING SHIPMENTS
+    shipment_direction = db.Column(db.String(20), default='outgoing')  # 'incoming' or 'outgoing'
+    origin_country = db.Column(db.String(50))  # UK, USA, Canada, China, etc.
+    origin_city = db.Column(db.String(100))
+    partner_courier_original = db.Column(db.String(50))  # Original courier before handover
+    partner_tracking_original = db.Column(db.String(50))
+    expected_arrival_date = db.Column(db.String(100))
+    customs_status = db.Column(db.String(50), default='pending')  # pending, cleared, held
+    delivery_address = db.Column(db.String(200))
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -324,11 +342,8 @@ def admin():
         action = request.form.get('action')
         
         if action == 'create_shipment':
+            print("⚠️ CREATE SHIPMENT WAS TRIGGERED - Check if this appears on refresh")
             tracking_code = generate_tracking_code()
-            estimated_date = calculate_estimated_delivery(
-                request.form.get('origin'), 
-                request.form.get('destination')
-            )
             
             new_shipment = Shipment(
                 tracking_code=tracking_code,
@@ -344,7 +359,7 @@ def admin():
                 current_location=request.form.get('origin')
             )
             db.session.add(new_shipment)
-            db.session.commit()
+            db.session.commit()    
             
             flash(f'✅ Shipment created! Tracking Code: {tracking_code}', 'success')
             
@@ -366,7 +381,7 @@ def admin():
                 db.session.commit()
                 flash(f'✅ Status updated for {tracking_code}', 'success')
             else:
-                flash('❌ Tracking code not found!', 'danger')
+                flash('❌ Tracking code not found!', 'danger')        
                 
         elif action == 'add_review':
             new_review = Review(
@@ -406,6 +421,39 @@ def admin():
                     flash('❌ New passwords do not match!', 'danger')
             else:
                 flash('❌ Current password is incorrect!', 'danger')
+        
+        # 👇 INCOMING SHIPMENT ACTION 👇
+        elif action == 'create_incoming_shipment':
+            # Generate incoming tracking code
+            country_code = request.form.get('origin_country')[:2].upper()
+            year = datetime.now().year
+            random_chars = ''.join(random.choices(string.digits, k=6))
+            tracking_code = f"INT-{country_code}-{year}-{random_chars}"
+            
+            new_shipment = Shipment(
+                tracking_code=tracking_code,
+                shipment_direction='incoming',
+                customer_name=request.form.get('customer_name'),
+                customer_email=request.form.get('customer_email'),
+                customer_phone=request.form.get('customer_phone'),
+                origin=f"{request.form.get('origin_city')}, {request.form.get('origin_country')}",
+                destination=request.form.get('destination'),
+                origin_country=request.form.get('origin_country'),
+                origin_city=request.form.get('origin_city'),
+                package_type=request.form.get('package_type'),
+                package_weight=float(request.form.get('package_weight', 0)),
+                partner_courier_original=request.form.get('partner_courier_original'),
+                partner_tracking_original=request.form.get('partner_tracking_original'),
+                expected_arrival_date=request.form.get('expected_arrival_date'),
+                delivery_address=request.form.get('delivery_address'),
+                status=request.form.get('status'),
+                current_location=request.form.get('status'),
+                notes=request.form.get('notes')
+            )
+            db.session.add(new_shipment)
+            db.session.commit()
+            
+            flash(f'✅ Incoming package registered! Tracking: {tracking_code}', 'success')
     
     shipments = Shipment.query.order_by(Shipment.id.desc()).all()
     
@@ -467,6 +515,46 @@ def detect_courier_ajax():
             'success': False,
             'error': str(e)
         }), 500
+
+# ============================================
+# EXPORT ROUTES
+# ============================================
+
+@app.route('/admin/export/all')
+@login_required
+def export_all():
+    shipments = Shipment.query.order_by(Shipment.id.desc()).all()
+    return export_all_shipments(shipments)
+
+@app.route('/admin/export/outgoing')
+@login_required
+def export_outgoing():
+    shipments = Shipment.query.all()
+    return export_outgoing_shipments(shipments)
+
+@app.route('/admin/export/incoming')
+@login_required
+def export_incoming():
+    shipments = Shipment.query.all()
+    return export_incoming_shipments(shipments)
+
+@app.route('/admin/export/delivered')
+@login_required
+def export_delivered():
+    shipments = Shipment.query.all()
+    return export_delivered_shipments(shipments)
+
+@app.route('/admin/export/pending')
+@login_required
+def export_pending():
+    shipments = Shipment.query.all()
+    return export_pending_shipments(shipments)
+
+@app.route('/admin/export/customers')
+@login_required
+def export_customers_list():
+    customers = Customer.query.order_by(Customer.last_shipment.desc()).all()
+    return export_customers(customers)        
 
 # For Render deployment
 application = app
