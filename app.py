@@ -554,7 +554,34 @@ def export_pending():
 @login_required
 def export_customers_list():
     customers = Customer.query.order_by(Customer.last_shipment.desc()).all()
-    return export_customers(customers)        
+    return export_customers(customers)
+
+@app.route('/reset-database')
+def reset_database():
+    import hashlib
+    from datetime import datetime
+    
+    # Drop all tables and recreate
+    db.drop_all()
+    db.create_all()
+    
+    # Create admin user
+    password_hash = hashlib.sha256("admin123".encode()).hexdigest()
+    admin = Admin(username="admin", password_hash=password_hash)
+    db.session.add(admin)
+    
+    # Add sample reviews
+    sample_reviews = [
+        Review(customer_name="Mr. Adebayo Ogunlesi", location="Ibadan", rating=5, 
+               comment="Excellent service! My package from Ibadan arrived quickly."),
+        Review(customer_name="Mrs. Funmilayo Adeyemi", location="Oyo Town", rating=5, 
+               comment="Best logistics company in Oyo State. Very reliable!"),
+    ]
+    db.session.add_all(sample_reviews)
+    
+    db.session.commit()
+    
+    return "✅ Database reset successful! <br><br>Login: admin / admin123 <br><br><a href='/admin/login'>Go to Admin Login</a>"
 
 # For Render deployment
 application = app
