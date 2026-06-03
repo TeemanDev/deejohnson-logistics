@@ -583,6 +583,45 @@ def reset_database():
     
     return "✅ Database reset successful! <br><br>Login: admin / admin123 <br><br><a href='/admin/login'>Go to Admin Login</a>"
 
+@app.route('/restore-shipment')
+def restore_shipment():
+    from datetime import datetime
+    
+    # Check if shipment already exists
+    existing = Shipment.query.filter_by(tracking_code="DJL-2026-HXESB").first()
+    if existing:
+        return "✅ Shipment DJL-2026-HXESB already exists in database!"
+    
+    # Create the shipment
+    new_shipment = Shipment(
+        tracking_code="DJL-2026-HXESB",
+        customer_name="Areo Tolulope B",
+        customer_email="toluare123@gmail.com",
+        customer_phone="+447833889142",
+        origin="Ibadan",
+        destination="Wolverhampton, United Kingdom",
+        package_type="Parcel",
+        package_weight=10.0,
+        estimated_delivery="June 10, 2026",
+        status="Picked up from customer",
+        current_location="Ibadan",
+        last_update=datetime.utcnow()
+    )
+    
+    db.session.add(new_shipment)
+    db.session.commit()
+    
+    return """
+    <h2>✅ Shipment Restored Successfully!</h2>
+    <p><strong>Tracking Code:</strong> DJL-2026-HXESB</p>
+    <p><strong>Customer:</strong> Areo Tolulope B</p>
+    <p><strong>Destination:</strong> Wolverhampton, United Kingdom</p>
+    <p><strong>Status:</strong> Picked up from customer</p>
+    <br>
+    <a href='/track'>Track this package</a><br>
+    <a href='/admin/login'>Go to Admin Panel</a>
+    """    
+
 # For Render deployment
 application = app
 
