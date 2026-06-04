@@ -216,23 +216,87 @@
                         </div>
                     </div>
 
-                    <!-- Update Status Tab -->
-                    <div class="tab-pane fade" id="update">
-                        <div class="card shadow">
-                            <div class="card-header bg-success text-white"><h4><i class="fas fa-edit"></i> Update Shipment Status</h4></div>
-                            <div class="card-body">
-                                <form method="POST">
-                                    <input type="hidden" name="action" value="update_status">
-                                    <div class="mb-3"><label>Tracking Code *</label><input type="text" name="tracking_code" class="form-control" placeholder="DJL-2024-XXXXX" required></div>
-                                    <div class="mb-3"><label>Current Status *</label><select name="status" class="form-control" required><option>Package registered - Awaiting pickup</option><option>Picked up from customer</option><option>In transit to Lagos</option><option>Arrived at Lagos Airport</option><option>Customs clearance in progress</option><option>Cleared - Awaiting international flight</option><option>Handed over to partner courier</option><option>In transit internationally</option><option>Arrived at destination</option><option>Out for delivery</option><option>Delivered successfully</option></select></div>
-                                    <div class="mb-3"><label>Current Location</label><input type="text" name="current_location" class="form-control"></div>
-                                    <div class="row"><div class="col-md-6 mb-3"><label>Partner Courier</label><input type="text" name="partner_courier" class="form-control" placeholder="FedEx, DHL, UPS"></div><div class="col-md-6 mb-3"><label>Partner Tracking Code</label><input type="text" name="partner_tracking" class="form-control"></div></div>
-                                    <div class="mb-3"><label>Internal Notes</label><textarea name="notes" rows="3" class="form-control"></textarea></div>
-                                    <button type="submit" class="btn btn-success w-100">Update Status</button>
-                                </form>
-                            </div>
-                        </div>
+<!-- Update Status Tab -->
+<div class="tab-pane fade" id="update">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h4><i class="fas fa-edit"></i> Update Shipment Status</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <input type="hidden" name="action" value="update_status">
+                <div class="mb-3">
+                    <label>Shipment Type</label>
+                    <select name="shipment_type" id="shipmentTypeSelect" class="form-control">
+                        <option value="outgoing">Outgoing (DJL-...)</option>
+                        <option value="incoming">Incoming (INT-...)</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Tracking Code *</label>
+                    <input type="text" name="tracking_code" class="form-control" placeholder="DJL-2024-XXXXX or INT-UK-2024-XXXXXX" required>
+                </div>
+                <div class="mb-3">
+                    <label>Current Status *</label>
+                    <select name="status" class="form-control" required>
+                        <optgroup label="Outgoing Shipment Status">
+                            <option>Package registered - Awaiting pickup</option>
+                            <option>Picked up from customer</option>
+                            <option>In transit to Lagos</option>
+                            <option>Arrived at Lagos Airport</option>
+                            <option>Customs clearance in progress</option>
+                            <option>Cleared - Awaiting international flight</option>
+                            <option>Handed over to partner courier</option>
+                            <option>In transit internationally</option>
+                            <option>Arrived at destination</option>
+                            <option>Out for delivery</option>
+                            <option>Delivered successfully</option>
+                        </optgroup>
+                        <optgroup label="Incoming Shipment Status">
+                            <option>Shipped from origin country</option>
+                            <option>In transit to Nigeria</option>
+                            <option>Arrived at Lagos Airport</option>
+                            <option>Customs clearance in progress</option>
+                            <option>Customs cleared - Awaiting pickup</option>
+                            <option>Out for delivery in Nigeria</option>
+                            <option>Delivered successfully</option>
+                            <option>Held at customs - Documentation needed</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Current Location</label>
+                    <input type="text" name="current_location" class="form-control" placeholder="e.g., London Heathrow, Lagos Airport, etc.">
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label>Partner Courier (Original)</label>
+                        <select name="partner_courier_original" class="form-control">
+                            <option value="">-- None / No Change --</option>
+                            <option value="Royal Mail">🇬🇧 Royal Mail (UK)</option>
+                            <option value="USPS">🇺🇸 USPS (USA)</option>
+                            <option value="Canada Post">🇨🇦 Canada Post</option>
+                            <option value="China Post">🇨🇳 China Post</option>
+                            <option value="FedEx">📦 FedEx</option>
+                            <option value="DHL">✈️ DHL</option>
+                            <option value="UPS">🚚 UPS</option>
+                            <option value="DPD">📮 DPD</option>
+                        </select>
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <label>Partner Tracking Code</label>
+                        <input type="text" name="partner_tracking" class="form-control" placeholder="Original courier tracking number">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label>Internal Notes</label>
+                    <textarea name="notes" rows="3" class="form-control" placeholder="Any additional notes about this shipment..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Update Status</button>
+            </form>
+        </div>
+    </div>
+</div>
 
                     <!-- Add Reviews Tab -->
                     <div class="tab-pane fade" id="reviews">
@@ -252,19 +316,61 @@
                     </div>
 
                     <!-- All Shipments Tab -->
-                    <div class="tab-pane fade" id="shipments">
-                        <div class="card shadow">
-                            <div class="card-header bg-info text-white"><h4><i class="fas fa-list"></i> All Shipments</h4></div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead><tr><th>Tracking Code</th><th>Customer</th><th>Route</th><th>Status</th><th>Last Update</th><th>Action</th></tr></thead>
-                                        <tbody>{% for ship in shipments %}<tr><td><strong>{{ ship.tracking_code }}</strong></td><td>{{ ship.customer_name }}</td><td>{{ ship.origin }} → {{ ship.destination }}</td><td>{% if 'Delivered' in ship.status %}<span class="status-badge status-delivered">✓ {{ ship.status[:30] }}</span>{% elif 'transit' in ship.status.lower() %}<span class="status-badge status-transit">🚚 {{ ship.status[:30] }}</span>{% else %}<span class="status-badge status-pending">⏳ {{ ship.status[:30] }}</span>{% endif %}</td><td>{{ ship.last_update.strftime('%Y-%m-%d') }}</td><td><form method="POST" style="display: inline;" onsubmit="return confirm('Delete this shipment?');"><input type="hidden" name="action" value="delete_shipment"><input type="hidden" name="tracking_code" value="{{ ship.tracking_code }}"><button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></form></td></tr>{% endfor %}</tbody>
-                                    </table>
+<div class="tab-pane fade" id="shipments">
+    <div class="card shadow">
+        <div class="card-header bg-info text-white"><h4><i class="fas fa-list"></i> All Shipments</h4></div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tracking Code</th>
+                            <th>Customer</th>
+                            <th>Route</th>
+                            <th>Status</th>
+                            <th>Last Update</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ship in shipments %}
+                        <tr>
+                            <td><strong>{{ ship.tracking_code }}</strong></td>
+                            <td>{{ ship.customer_name }}</td>
+                            <td>{{ ship.origin }} → {{ ship.destination }}</td>
+                            <td>
+                                {% if 'Delivered' in ship.status %}
+                                    <span class="status-badge status-delivered">✓ {{ ship.status[:30] }}</span>
+                                {% elif 'transit' in ship.status.lower() %}
+                                    <span class="status-badge status-transit">🚚 {{ ship.status[:30] }}</span>
+                                {% else %}
+                                    <span class="status-badge status-pending">⏳ {{ ship.status[:30] }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ ship.last_update.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('admin_edit_shipment', shipment_id=ship.id) }}" 
+                                       class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Delete this shipment?');">
+                                        <input type="hidden" name="action" value="delete_shipment">
+                                        <input type="hidden" name="tracking_code" value="{{ ship.tracking_code }}">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
                     <!-- Settings Tab -->
                     <div class="tab-pane fade" id="settings">

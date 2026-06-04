@@ -342,8 +342,12 @@ def admin():
         action = request.form.get('action')
         
         if action == 'create_shipment':
-            print("⚠️ CREATE SHIPMENT WAS TRIGGERED - Check if this appears on refresh")
+            print("⚠️ CREATE SHIPMENT WAS TRIGGERED")
             tracking_code = generate_tracking_code()
+            estimated_date = calculate_estimated_delivery(
+                request.form.get('origin'), 
+                request.form.get('destination')
+            )
             
             new_shipment = Shipment(
                 tracking_code=tracking_code,
@@ -359,13 +363,17 @@ def admin():
                 current_location=request.form.get('origin')
             )
             db.session.add(new_shipment)
-            db.session.commit()    
+            db.session.commit()
             
             flash(f'✅ Shipment created! Tracking Code: {tracking_code}', 'success')
+            
+            # 🔥 IMPORTANT: Redirect to prevent re-submission on refresh
+            return redirect(url_for('admin'))
             
         elif action == 'update_status':
             tracking_code = request.form.get('tracking_code')
             shipment = Shipment.query.filter_by(tracking_code=tracking_code).first()
+            
             if shipment:
                 shipment.status = request.form.get('status')
                 shipment.current_location = request.form.get('current_location')
@@ -620,7 +628,50 @@ def restore_shipment():
     <br>
     <a href='/track'>Track this package</a><br>
     <a href='/admin/login'>Go to Admin Panel</a>
-    """    
+    """
+
+@app.route('/admin/shipment/edit/<int:shipment_id>', methods=['GET', 'POST'])
+@login_required
+def admin_edit_shipment(shipment_id):
+    shipment = Shipment.query.get_or_404(shipment_id)
+    
+    if request.method == 'POST':
+        # Update basic shipment details
+        shipment.customer_name = request.form.get('customer_name')
+        shipment.customer_email = request.form.get('customer_email')
+        shipment.customer_phone = request.form.get('customer_phone')
+        shipment.origin = request.form.get('origin')
+        shipment.destination = request.form.get('destination')
+        shipment.package_type = request.form.get('package_type')
+        shipment.package_weight = float(request.form.get('package_weight', 0))
+        shipment.estimated_delivery = request.form.get('estimated_delivery')
+        shipment.status = request.form.get('status')
+        shipment.current_location = request.form.get('current_location')
+        shipment.notes = request.form.get('notes')
+        
+        # Update incoming shipment specific fields
+        shipment.origin_country = request.form.get('origin_country')
+        shipment.origin_city = request.form.get('origin_city')
+        shipment.delivery_address = request.form.get('delivery_address')
+        shipment.partner_courier_original = request.form.get('partner_courier_original')
+        shipment.partner_tracking_original = request.form.get('partner_tracking_original')
+        shipment.expected_arrival_date = request.form.get('expected_arrival_date')
+        shipment.customs_status = request.form.get('customs_status')
+        
+        # Update partner courier info (for outgoing shipments)
+        partner_courier = request.form.get('partner_courier')
+        partner_tracking = request.form.get('partner_tracking')
+        if partner_courier and partner_tracking:
+            shipment.partner_courier = partner_courier
+            shipment.partner_tracking = partner_tracking
+        
+        shipment.last_update = datetime.utcnow()
+        db.session.commit()
+        
+        flash(f'✅ Shipment {shipment.tracking_code} updated successfully!', 'success')
+        return redirect(url_for('admin'))
+    
+    return render_template('admin_edit_shipment.html', shipment=shipment)    
 
 # For Render deployment
 application = app
