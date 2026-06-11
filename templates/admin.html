@@ -49,7 +49,6 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="/"><i class="fas fa-shipping-fast me-2"></i>DeeJohnson Admin</a>
             <div class="ms-auto">
-                
                 <span class="text-white me-3"><i class="fas fa-user-shield"></i> {{ session.get('admin_username', 'Admin') }}</span>
                 <a href="/admin/logout" class="btn btn-outline-light btn-sm"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
@@ -61,9 +60,7 @@
             <div class="col-md-2 sidebar p-3">
                 <div class="nav flex-column nav-pills" role="tablist">
                     <button class="nav-link text-white active" data-bs-toggle="pill" data-bs-target="#dashboard" type="button"><i class="fas fa-tachometer-alt"></i> Dashboard</button>
-<button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#incoming" type="button">
-    <i class="fas fa-download"></i> Incoming Shipments
-</button>
+                    <button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#incoming" type="button"><i class="fas fa-download"></i> Incoming Shipments</button>
                     <button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#create" type="button"><i class="fas fa-plus-circle"></i> Create Shipment</button>
                     <button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#update" type="button"><i class="fas fa-edit"></i> Update Status</button>
                     <button class="nav-link text-white" data-bs-toggle="pill" data-bs-target="#reviews" type="button"><i class="fas fa-star"></i> Add Reviews</button>
@@ -84,115 +81,115 @@
                             <div class="col-md-3"><div class="stat-card"><i class="fas fa-truck fa-2x text-warning mb-2"></i><div class="stat-number">{{ stats.in_transit }}</div><div>In Transit</div></div></div>
                             <div class="col-md-3"><div class="stat-card"><i class="fas fa-star fa-2x text-warning mb-2"></i><div class="stat-number">{{ stats.avg_rating }}/5.0</div><div>Average Rating</div></div></div>
                         </div>
-                        <div class="card"><div class="card-header bg-primary text-white"><h5><i class="fas fa-chart-bar"></i> Shipment Trends</h5></div><div class="card-body"><canvas id="shipmentChart" height="100"></canvas></canvas></div></div>
+                        <div class="card"><div class="card-header bg-primary text-white"><h5><i class="fas fa-chart-bar"></i> Shipment Trends</h5></div><div class="card-body"><canvas id="shipmentChart" height="100"></canvas></div></div>
                     </div>
 
                     <!-- Incoming Shipment Tab -->
-<div class="tab-pane fade" id="incoming">
-    <div class="card shadow">
-        <div class="card-header" style="background: linear-gradient(135deg, #0A192F, #0F3B5C); color: white;">
-            <h4><i class="fas fa-globe"></i> Register Incoming International Package</h4>
-        </div>
-        <div class="card-body">
-            <form method="POST">
-                <input type="hidden" name="action" value="create_incoming_shipment">
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label>Origin Country *</label>
-                        <select name="origin_country" class="form-control" required>
-                            <option value="">Select Country</option>
-                            <option value="UK">🇬🇧 United Kingdom</option>
-                            <option value="USA">🇺🇸 United States</option>
-                            <option value="Canada">🇨🇦 Canada</option>
-                            <option value="China">🇨🇳 China</option>
-                            <option value="Germany">🇩🇪 Germany</option>
-                            <option value="France">🇫🇷 France</option>
-                            <option value="Italy">🇮🇹 Italy</option>
-                            <option value="Spain">🇪🇸 Spain</option>
-                            <option value="UAE">🇦🇪 UAE</option>
-                            <option value="South Africa">🇿🇦 South Africa</option>
-                        </select>
+                    <div class="tab-pane fade" id="incoming">
+                        <div class="card shadow">
+                            <div class="card-header" style="background: linear-gradient(135deg, #0A192F, #0F3B5C); color: white;">
+                                <h4><i class="fas fa-globe"></i> Register Incoming International Package</h4>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST">
+                                    <input type="hidden" name="action" value="create_incoming_shipment">
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label>Origin Country *</label>
+                                            <select name="origin_country" class="form-control" required>
+                                                <option value="">Select Country</option>
+                                                <option value="UK">🇬🇧 United Kingdom</option>
+                                                <option value="USA">🇺🇸 United States</option>
+                                                <option value="Canada">🇨🇦 Canada</option>
+                                                <option value="China">🇨🇳 China</option>
+                                                <option value="Germany">🇩🇪 Germany</option>
+                                                <option value="France">🇫🇷 France</option>
+                                                <option value="Italy">🇮🇹 Italy</option>
+                                                <option value="Spain">🇪🇸 Spain</option>
+                                                <option value="UAE">🇦🇪 UAE</option>
+                                                <option value="South Africa">🇿🇦 South Africa</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label>Origin City</label>
+                                            <input type="text" name="origin_city" class="form-control" placeholder="e.g., London, New York">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label>Destination in Nigeria *</label>
+                                            <input type="text" name="destination" class="form-control" value="Ibadan" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Customer Name *</label>
+                                            <input type="text" name="customer_name" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Customer Phone *</label>
+                                            <input type="text" name="customer_phone" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Customer Email</label>
+                                            <input type="email" name="customer_email" class="form-control">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Delivery Address in Nigeria</label>
+                                            <input type="text" name="delivery_address" class="form-control" placeholder="Full delivery address">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label>Partner Courier (Original) *</label>
+                                            <select name="partner_courier_original" class="form-control">
+                                                <option value="">Select Courier</option>
+                                                <option value="Royal Mail">🇬🇧 Royal Mail (UK)</option>
+                                                <option value="USPS">🇺🇸 USPS (USA)</option>
+                                                <option value="Canada Post">🇨🇦 Canada Post</option>
+                                                <option value="China Post">🇨🇳 China Post</option>
+                                                <option value="FedEx">📦 FedEx</option>
+                                                <option value="DHL">✈️ DHL</option>
+                                                <option value="UPS">🚚 UPS</option>
+                                                <option value="DPD">📮 DPD</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label>Original Tracking Number *</label>
+                                            <input type="text" name="partner_tracking_original" class="form-control" placeholder="Tracking number from origin courier">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label>Expected Arrival Date</label>
+                                            <input type="date" name="expected_arrival_date" class="form-control">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Package Type</label>
+                                            <select name="package_type" class="form-control">
+                                                <option>Documents</option><option>Parcel</option><option>Pallet</option><option>Container</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Weight (kg)</label>
+                                            <input type="number" name="package_weight" class="form-control" step="0.1">
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <label>Current Status</label>
+                                            <select name="status" class="form-control" required>
+                                                <option>Shipped from origin country</option>
+                                                <option>In transit to Nigeria</option>
+                                                <option>Arrived at Lagos Airport</option>
+                                                <option>Customs clearance in progress</option>
+                                                <option>Customs cleared - Awaiting pickup</option>
+                                                <option>Out for delivery in Nigeria</option>
+                                                <option>Delivered successfully</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <label>Internal Notes</label>
+                                            <textarea name="notes" rows="2" class="form-control" placeholder="Special instructions, package contents, etc."></textarea>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-save"></i> Register Incoming Package
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label>Origin City</label>
-                        <input type="text" name="origin_city" class="form-control" placeholder="e.g., London, New York">
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label>Destination in Nigeria *</label>
-                        <input type="text" name="destination" class="form-control" value="Ibadan" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Customer Name *</label>
-                        <input type="text" name="customer_name" class="form-control" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Customer Phone *</label>
-                        <input type="text" name="customer_phone" class="form-control" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Customer Email</label>
-                        <input type="email" name="customer_email" class="form-control">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Delivery Address in Nigeria</label>
-                        <input type="text" name="delivery_address" class="form-control" placeholder="Full delivery address">
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label>Partner Courier (Original) *</label>
-                        <select name="partner_courier_original" class="form-control">
-                            <option value="">Select Courier</option>
-                            <option value="Royal Mail">🇬🇧 Royal Mail (UK)</option>
-                            <option value="USPS">🇺🇸 USPS (USA)</option>
-                            <option value="Canada Post">🇨🇦 Canada Post</option>
-                            <option value="China Post">🇨🇳 China Post</option>
-                            <option value="FedEx">📦 FedEx</option>
-                            <option value="DHL">✈️ DHL</option>
-                            <option value="UPS">🚚 UPS</option>
-                            <option value="DPD">📮 DPD</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label>Original Tracking Number *</label>
-                        <input type="text" name="partner_tracking_original" class="form-control" placeholder="Tracking number from origin courier">
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label>Expected Arrival Date</label>
-                        <input type="date" name="expected_arrival_date" class="form-control">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Package Type</label>
-                        <select name="package_type" class="form-control">
-                            <option>Documents</option><option>Parcel</option><option>Pallet</option><option>Container</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Weight (kg)</label>
-                        <input type="number" name="package_weight" class="form-control" step="0.1">
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <label>Current Status</label>
-                        <select name="status" class="form-control" required>
-                            <option>Shipped from origin country</option>
-                            <option>In transit to Nigeria</option>
-                            <option>Arrived at Lagos Airport</option>
-                            <option>Customs clearance in progress</option>
-                            <option>Customs cleared - Awaiting pickup</option>
-                            <option>Out for delivery in Nigeria</option>
-                            <option>Delivered successfully</option>
-                        </select>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <label>Internal Notes</label>
-                        <textarea name="notes" rows="2" class="form-control" placeholder="Special instructions, package contents, etc."></textarea>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">
-                    <i class="fas fa-save"></i> Register Incoming Package
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
 
                     <!-- Create Shipment Tab -->
                     <div class="tab-pane fade" id="create">
@@ -207,7 +204,71 @@
                                         <div class="col-md-6 mb-3"><label>Customer Phone *</label><input type="text" name="customer_phone" class="form-control" required></div>
                                         <div class="col-md-6 mb-3"><label>Package Weight (kg)</label><input type="number" name="package_weight" class="form-control" step="0.1"></div>
                                         <div class="col-md-6 mb-3"><label>From (Origin) *</label><input type="text" name="origin" class="form-control" value="Ibadan" required></div>
-                                        <div class="col-md-6 mb-3"><label>To (Destination) *</label><input type="text" name="destination" class="form-control" required></div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>To (Destination) *</label>
+                                            <select name="destination" class="form-control" required>
+                                                <option value="">-- Select Destination --</option>
+                                                <optgroup label="South West Nigeria">
+                                                    <option>Ibadan, Oyo State</option>
+                                                    <option>Lagos, Lagos State</option>
+                                                    <option>Abeokuta, Ogun State</option>
+                                                    <option>Akure, Ondo State</option>
+                                                    <option>Osogbo, Osun State</option>
+                                                    <option>Ado-Ekiti, Ekiti State</option>
+                                                </optgroup>
+                                                <optgroup label="South East Nigeria">
+                                                    <option>Enugu, Enugu State</option>
+                                                    <option>Owerri, Imo State</option>
+                                                    <option>Awka, Anambra State</option>
+                                                    <option>Aba, Abia State</option>
+                                                    <option>Umuahia, Abia State</option>
+                                                </optgroup>
+                                                <optgroup label="South South Nigeria">
+                                                    <option>Port Harcourt, Rivers State</option>
+                                                    <option>Benin City, Edo State</option>
+                                                    <option>Warri, Delta State</option>
+                                                    <option>Calabar, Cross River State</option>
+                                                    <option>Uyo, Akwa Ibom State</option>
+                                                    <option>Yenagoa, Bayelsa State</option>
+                                                </optgroup>
+                                                <optgroup label="North Central Nigeria">
+                                                    <option>Abuja, FCT</option>
+                                                    <option>Jos, Plateau State</option>
+                                                    <option>Lokoja, Kogi State</option>
+                                                    <option>Makurdi, Benue State</option>
+                                                    <option>Minna, Niger State</option>
+                                                    <option>Ilorin, Kwara State</option>
+                                                </optgroup>
+                                                <optgroup label="North East Nigeria">
+                                                    <option>Maiduguri, Borno State</option>
+                                                    <option>Bauchi, Bauchi State</option>
+                                                    <option>Yola, Adamawa State</option>
+                                                    <option>Gombe, Gombe State</option>
+                                                    <option>Damaturu, Yobe State</option>
+                                                </optgroup>
+                                                <optgroup label="North West Nigeria">
+                                                    <option>Kano, Kano State</option>
+                                                    <option>Kaduna, Kaduna State</option>
+                                                    <option>Sokoto, Sokoto State</option>
+                                                    <option>Katsina, Katsina State</option>
+                                                    <option>Zamfara, Zamfara State</option>
+                                                    <option>Birnin Kebbi, Kebbi State</option>
+                                                </optgroup>
+                                                <optgroup label="International">
+                                                    <option>United Kingdom</option>
+                                                    <option>United States</option>
+                                                    <option>Canada</option>
+                                                    <option>China</option>
+                                                    <option>Germany</option>
+                                                    <option>France</option>
+                                                    <option>Italy</option>
+                                                    <option>Spain</option>
+                                                    <option>UAE</option>
+                                                    <option>South Africa</option>
+                                                </optgroup>
+                                            </select>
+                                            <small class="text-muted">Select destination city and state</small>
+                                        </div>
                                         <div class="col-12 mb-3"><label>Package Type</label><select name="package_type" class="form-control"><option>Documents</option><option>Parcel</option><option>Pallet</option><option>Container</option></select></div>
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100">Generate Tracking Code →</button>
@@ -216,87 +277,87 @@
                         </div>
                     </div>
 
-<!-- Update Status Tab -->
-<div class="tab-pane fade" id="update">
-    <div class="card shadow">
-        <div class="card-header bg-success text-white">
-            <h4><i class="fas fa-edit"></i> Update Shipment Status</h4>
-        </div>
-        <div class="card-body">
-            <form method="POST">
-                <input type="hidden" name="action" value="update_status">
-                <div class="mb-3">
-                    <label>Shipment Type</label>
-                    <select name="shipment_type" id="shipmentTypeSelect" class="form-control">
-                        <option value="outgoing">Outgoing (DJL-...)</option>
-                        <option value="incoming">Incoming (INT-...)</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label>Tracking Code *</label>
-                    <input type="text" name="tracking_code" class="form-control" placeholder="DJL-2024-XXXXX or INT-UK-2024-XXXXXX" required>
-                </div>
-                <div class="mb-3">
-                    <label>Current Status *</label>
-                    <select name="status" class="form-control" required>
-                        <optgroup label="Outgoing Shipment Status">
-                            <option>Package registered - Awaiting pickup</option>
-                            <option>Picked up from customer</option>
-                            <option>In transit to Lagos</option>
-                            <option>Arrived at Lagos Airport</option>
-                            <option>Customs clearance in progress</option>
-                            <option>Cleared - Awaiting international flight</option>
-                            <option>Handed over to partner courier</option>
-                            <option>In transit internationally</option>
-                            <option>Arrived at destination</option>
-                            <option>Out for delivery</option>
-                            <option>Delivered successfully</option>
-                        </optgroup>
-                        <optgroup label="Incoming Shipment Status">
-                            <option>Shipped from origin country</option>
-                            <option>In transit to Nigeria</option>
-                            <option>Arrived at Lagos Airport</option>
-                            <option>Customs clearance in progress</option>
-                            <option>Customs cleared - Awaiting pickup</option>
-                            <option>Out for delivery in Nigeria</option>
-                            <option>Delivered successfully</option>
-                            <option>Held at customs - Documentation needed</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label>Current Location</label>
-                    <input type="text" name="current_location" class="form-control" placeholder="e.g., London Heathrow, Lagos Airport, etc.">
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label>Partner Courier (Original)</label>
-                        <select name="partner_courier_original" class="form-control">
-                            <option value="">-- None / No Change --</option>
-                            <option value="Royal Mail">🇬🇧 Royal Mail (UK)</option>
-                            <option value="USPS">🇺🇸 USPS (USA)</option>
-                            <option value="Canada Post">🇨🇦 Canada Post</option>
-                            <option value="China Post">🇨🇳 China Post</option>
-                            <option value="FedEx">📦 FedEx</option>
-                            <option value="DHL">✈️ DHL</option>
-                            <option value="UPS">🚚 UPS</option>
-                            <option value="DPD">📮 DPD</option>
-                        </select>
+                    <!-- Update Status Tab -->
+                    <div class="tab-pane fade" id="update">
+                        <div class="card shadow">
+                            <div class="card-header bg-success text-white">
+                                <h4><i class="fas fa-edit"></i> Update Shipment Status</h4>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST">
+                                    <input type="hidden" name="action" value="update_status">
+                                    <div class="mb-3">
+                                        <label>Shipment Type</label>
+                                        <select name="shipment_type" id="shipmentTypeSelect" class="form-control">
+                                            <option value="outgoing">Outgoing (DJL-...)</option>
+                                            <option value="incoming">Incoming (INT-...)</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Tracking Code *</label>
+                                        <input type="text" name="tracking_code" class="form-control" placeholder="DJL-2024-XXXXX or INT-UK-2024-XXXXXX" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Current Status *</label>
+                                        <select name="status" class="form-control" required>
+                                            <optgroup label="Outgoing Shipment Status">
+                                                <option>Package registered - Awaiting pickup</option>
+                                                <option>Picked up from customer</option>
+                                                <option>In transit to Lagos</option>
+                                                <option>Arrived at Lagos Airport</option>
+                                                <option>Customs clearance in progress</option>
+                                                <option>Cleared - Awaiting international flight</option>
+                                                <option>Handed over to partner courier</option>
+                                                <option>In transit internationally</option>
+                                                <option>Arrived at destination</option>
+                                                <option>Out for delivery</option>
+                                                <option>Delivered successfully</option>
+                                            </optgroup>
+                                            <optgroup label="Incoming Shipment Status">
+                                                <option>Shipped from origin country</option>
+                                                <option>In transit to Nigeria</option>
+                                                <option>Arrived at Lagos Airport</option>
+                                                <option>Customs clearance in progress</option>
+                                                <option>Customs cleared - Awaiting pickup</option>
+                                                <option>Out for delivery in Nigeria</option>
+                                                <option>Delivered successfully</option>
+                                                <option>Held at customs - Documentation needed</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Current Location</label>
+                                        <input type="text" name="current_location" class="form-control" placeholder="e.g., London Heathrow, Lagos Airport, etc.">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label>Partner Courier (Original)</label>
+                                            <select name="partner_courier_original" class="form-control">
+                                                <option value="">-- None / No Change --</option>
+                                                <option value="Royal Mail">🇬🇧 Royal Mail (UK)</option>
+                                                <option value="USPS">🇺🇸 USPS (USA)</option>
+                                                <option value="Canada Post">🇨🇦 Canada Post</option>
+                                                <option value="China Post">🇨🇳 China Post</option>
+                                                <option value="FedEx">📦 FedEx</option>
+                                                <option value="DHL">✈️ DHL</option>
+                                                <option value="UPS">🚚 UPS</option>
+                                                <option value="DPD">📮 DPD</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Partner Tracking Code</label>
+                                            <input type="text" name="partner_tracking" class="form-control" placeholder="Original courier tracking number">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Internal Notes</label>
+                                        <textarea name="notes" rows="3" class="form-control" placeholder="Any additional notes about this shipment..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100">Update Status</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label>Partner Tracking Code</label>
-                        <input type="text" name="partner_tracking" class="form-control" placeholder="Original courier tracking number">
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label>Internal Notes</label>
-                    <textarea name="notes" rows="3" class="form-control" placeholder="Any additional notes about this shipment..."></textarea>
-                </div>
-                <button type="submit" class="btn btn-success w-100">Update Status</button>
-            </form>
-        </div>
-    </div>
-</div>
 
                     <!-- Add Reviews Tab -->
                     <div class="tab-pane fade" id="reviews">
@@ -316,61 +377,61 @@
                     </div>
 
                     <!-- All Shipments Tab -->
-<div class="tab-pane fade" id="shipments">
-    <div class="card shadow">
-        <div class="card-header bg-info text-white"><h4><i class="fas fa-list"></i> All Shipments</h4></div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Tracking Code</th>
-                            <th>Customer</th>
-                            <th>Route</th>
-                            <th>Status</th>
-                            <th>Last Update</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for ship in shipments %}
-                        <tr>
-                            <td><strong>{{ ship.tracking_code }}</strong></td>
-                            <td>{{ ship.customer_name }}</td>
-                            <td>{{ ship.origin }} → {{ ship.destination }}</td>
-                            <td>
-                                {% if 'Delivered' in ship.status %}
-                                    <span class="status-badge status-delivered">✓ {{ ship.status[:30] }}</span>
-                                {% elif 'transit' in ship.status.lower() %}
-                                    <span class="status-badge status-transit">🚚 {{ ship.status[:30] }}</span>
-                                {% else %}
-                                    <span class="status-badge status-pending">⏳ {{ ship.status[:30] }}</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ ship.last_update.strftime('%Y-%m-%d') }}</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ url_for('admin_edit_shipment', shipment_id=ship.id) }}" 
-                                       class="btn btn-primary btn-sm">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Delete this shipment?');">
-                                        <input type="hidden" name="action" value="delete_shipment">
-                                        <input type="hidden" name="tracking_code" value="{{ ship.tracking_code }}">
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                    <div class="tab-pane fade" id="shipments">
+                        <div class="card shadow">
+                            <div class="card-header bg-info text-white"><h4><i class="fas fa-list"></i> All Shipments</h4></div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Tracking Code</th>
+                                                <th>Customer</th>
+                                                <th>Route</th>
+                                                <th>Status</th>
+                                                <th>Last Update</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for ship in shipments %}
+                                            <tr>
+                                                <td><strong>{{ ship.tracking_code }}</strong></td>
+                                                <td>{{ ship.customer_name }}</td>
+                                                <td>{{ ship.origin }} → {{ ship.destination }}</td>
+                                                <td>
+                                                    {% if 'Delivered' in ship.status %}
+                                                        <span class="status-badge status-delivered">✓ {{ ship.status[:30] }}</span>
+                                                    {% elif 'transit' in ship.status.lower() %}
+                                                        <span class="status-badge status-transit">🚚 {{ ship.status[:30] }}</span>
+                                                    {% else %}
+                                                        <span class="status-badge status-pending">⏳ {{ ship.status[:30] }}</span>
+                                                    {% endif %}
+                                                 </td>
+                                                <td>{{ ship.last_update.strftime('%Y-%m-%d') }}</td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ url_for('admin_edit_shipment', shipment_id=ship.id) }}" 
+                                                           class="btn btn-primary btn-sm">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </a>
+                                                        <form method="POST" style="display: inline;" onsubmit="return confirm('Delete this shipment?');">
+                                                            <input type="hidden" name="action" value="delete_shipment">
+                                                            <input type="hidden" name="tracking_code" value="{{ ship.tracking_code }}">
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                 </td>
+                                             </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Settings Tab -->
                     <div class="tab-pane fade" id="settings">
@@ -437,7 +498,7 @@
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <div class="card text-center">
-                                            <div class="card-body">
+                                            <div class-card-body>
                                                 <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
                                                 <h5>Delivered</h5>
                                                 <p>Export only delivered shipments</p>
