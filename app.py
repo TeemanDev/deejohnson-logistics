@@ -69,13 +69,13 @@ class Shipment(db.Model):
     notification_sent = db.Column(db.Boolean, default=False)
     
     # NEW FIELDS FOR INCOMING SHIPMENTS
-    shipment_direction = db.Column(db.String(20), default='outgoing')  # 'incoming' or 'outgoing'
-    origin_country = db.Column(db.String(50))  # UK, USA, Canada, China, etc.
+    shipment_direction = db.Column(db.String(20), default='outgoing')
+    origin_country = db.Column(db.String(50))
     origin_city = db.Column(db.String(100))
-    partner_courier_original = db.Column(db.String(50))  # Original courier before handover
+    partner_courier_original = db.Column(db.String(50))
     partner_tracking_original = db.Column(db.String(50))
     expected_arrival_date = db.Column(db.String(100))
-    customs_status = db.Column(db.String(50), default='pending')  # pending, cleared, held
+    customs_status = db.Column(db.String(50), default='pending')
     delivery_address = db.Column(db.String(200))
 
 class Review(db.Model):
@@ -100,6 +100,21 @@ class Notification(db.Model):
     message = db.Column(db.Text)
     sent_at = db.Column(db.DateTime, default=datetime.utcnow)
     sent_via = db.Column(db.String(20))
+
+class Customer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    customer_name = db.Column(db.String(100), nullable=False)
+    customer_email = db.Column(db.String(100))
+    customer_phone = db.Column(db.String(20))
+    address = db.Column(db.String(200))
+    city = db.Column(db.String(50))
+    state = db.Column(db.String(50))
+    total_shipments = db.Column(db.Integer, default=0)
+    total_spent = db.Column(db.Float, default=0)
+    notes = db.Column(db.Text)
+    first_shipment = db.Column(db.DateTime, default=datetime.utcnow)
+    last_shipment = db.Column(db.DateTime, default=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)    
 
 # ============================================
 # COURIER INTEGRATION FUNCTIONS
@@ -176,12 +191,12 @@ def get_courier_icon(courier):
 def get_courier_color(courier):
     """Return color for each courier"""
     colors = {
-        'FedEx': '#4B0082',      # Purple
-        'DHL': '#FFCC00',         # Yellow
-        'DPD': '#E3000F',         # Red
-        'USPS': '#004B87',        # Navy Blue
-        'Royal Mail': '#C8102E',  # Red
-        'UPS': '#351C15'          # Brown
+        'FedEx': '#4B0082',
+        'DHL': '#FFCC00',
+        'DPD': '#E3000F',
+        'USPS': '#004B87',
+        'Royal Mail': '#C8102E',
+        'UPS': '#351C15'
     }
     return colors.get(courier, '#0F3B5C')
 
@@ -277,7 +292,6 @@ def track():
         code = request.form.get('tracking_code')
         shipment = Shipment.query.filter_by(tracking_code=code).first()
         
-        # Get partner tracking info if available
         if shipment and shipment.partner_courier and shipment.partner_tracking:
             partner_url = get_tracking_url(shipment.partner_courier, shipment.partner_tracking)
             courier_icon = get_courier_icon(shipment.partner_courier)
@@ -292,7 +306,6 @@ def track():
                          get_courier_icon=get_courier_icon,
                          get_courier_color=get_courier_color)
 
-# ✅ ADD GOOGLE VERIFICATION ROUTE HERE
 @app.route('/google79bcbfa2d09351d4.html')
 def google_verify():
     from flask import send_from_directory
@@ -300,7 +313,6 @@ def google_verify():
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
-    # Check if admin exists, if not create one
     with app.app_context():
         if Admin.query.count() == 0:
             default_password = hashlib.sha256("admin123".encode()).hexdigest()
@@ -342,7 +354,6 @@ def admin():
         action = request.form.get('action')
         
         if action == 'create_shipment':
-            print("⚠️ CREATE SHIPMENT WAS TRIGGERED")
             tracking_code = generate_tracking_code()
             estimated_date = calculate_estimated_delivery(
                 request.form.get('origin'), 
@@ -366,8 +377,6 @@ def admin():
             db.session.commit()
             
             flash(f'✅ Shipment created! Tracking Code: {tracking_code}', 'success')
-            
-            # 🔥 IMPORTANT: Redirect to prevent re-submission on refresh
             return redirect(url_for('admin'))
             
         elif action == 'update_status':
@@ -430,9 +439,8 @@ def admin():
             else:
                 flash('❌ Current password is incorrect!', 'danger')
         
-        # 👇 INCOMING SHIPMENT ACTION 👇
+        # INCOMING SHIPMENT ACTION
         elif action == 'create_incoming_shipment':
-            # Generate incoming tracking code
             country_code = request.form.get('origin_country')[:2].upper()
             year = datetime.now().year
             random_chars = ''.join(random.choices(string.digits, k=6))
@@ -465,7 +473,6 @@ def admin():
     
     shipments = Shipment.query.order_by(Shipment.id.desc()).all()
     
-    # Get statistics
     total_shipments = Shipment.query.count()
     delivered = Shipment.query.filter(Shipment.status.like('%Delivered%')).count()
     in_transit = total_shipments - delivered
@@ -507,7 +514,6 @@ def get_stats():
 
 @app.route('/api/detect-courier', methods=['POST'])
 def detect_courier_ajax():
-    """AJAX endpoint to detect courier from tracking number"""
     try:
         data = request.get_json()
         tracking_number = data.get('tracking_number', '')
@@ -569,16 +575,13 @@ def reset_database():
     import hashlib
     from datetime import datetime
     
-    # Drop all tables and recreate
     db.drop_all()
     db.create_all()
     
-    # Create admin user
     password_hash = hashlib.sha256("admin123".encode()).hexdigest()
     admin = Admin(username="admin", password_hash=password_hash)
     db.session.add(admin)
     
-    # Add sample reviews
     sample_reviews = [
         Review(customer_name="Mr. Adebayo Ogunlesi", location="Ibadan", rating=5, 
                comment="Excellent service! My package from Ibadan arrived quickly."),
@@ -595,12 +598,10 @@ def reset_database():
 def restore_shipment():
     from datetime import datetime
     
-    # Check if shipment already exists
     existing = Shipment.query.filter_by(tracking_code="DJL-2026-HXESB").first()
     if existing:
         return "✅ Shipment DJL-2026-HXESB already exists in database!"
     
-    # Create the shipment
     new_shipment = Shipment(
         tracking_code="DJL-2026-HXESB",
         customer_name="Areo Tolulope B",
@@ -636,7 +637,6 @@ def admin_edit_shipment(shipment_id):
     shipment = Shipment.query.get_or_404(shipment_id)
     
     if request.method == 'POST':
-        # Update basic shipment details
         shipment.customer_name = request.form.get('customer_name')
         shipment.customer_email = request.form.get('customer_email')
         shipment.customer_phone = request.form.get('customer_phone')
@@ -649,7 +649,6 @@ def admin_edit_shipment(shipment_id):
         shipment.current_location = request.form.get('current_location')
         shipment.notes = request.form.get('notes')
         
-        # Update incoming shipment specific fields
         shipment.origin_country = request.form.get('origin_country')
         shipment.origin_city = request.form.get('origin_city')
         shipment.delivery_address = request.form.get('delivery_address')
@@ -658,7 +657,6 @@ def admin_edit_shipment(shipment_id):
         shipment.expected_arrival_date = request.form.get('expected_arrival_date')
         shipment.customs_status = request.form.get('customs_status')
         
-        # Update partner courier info (for outgoing shipments)
         partner_courier = request.form.get('partner_courier')
         partner_tracking = request.form.get('partner_tracking')
         if partner_courier and partner_tracking:
@@ -678,7 +676,6 @@ application = app
 
 @app.route('/health')
 def health():
-    """Lightweight health check endpoint for cron-job.org"""
     return "OK", 200
 
 if __name__ == '__main__':
