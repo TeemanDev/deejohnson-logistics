@@ -192,3 +192,57 @@ video {
 .modal-footer .btn-success:hover {
     background-color: #128C7E;
 }
+
+/* Payment Options Styles */
+.payment-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.payment-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+}
+.payment-card .badge {
+    font-size: 0.7rem;
+    padding: 5px 10px;
+}
+#bankDetails .table {
+    margin-bottom: 0;
+}
+#bankDetails .table th {
+    background: var(--navy-deep);
+    color: white;
+}
+
+/* Coverage Map Styles */
+.map-container {
+    position: relative;
+    overflow: hidden;
+}
+.map-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.coverage-card .badge {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+}
+
+/* Process Flow Styles */
+.process-step:hover {
+    transform: translateY(-5px);
+}
+.process-icon {
+    transition: transform 0.3s ease;
+}
+.process-step:hover .process-icon {
+    transform: scale(1.1);
+}
+
+/* Responsive arrows */
+@media (max-width: 992px) {
+    .process-step {
+        margin-bottom: 20px;
+    }
+}
