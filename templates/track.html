@@ -13,53 +13,113 @@
             --navy-medium: #0F3B5C;
             --gold-accent: #C9A03D;
         }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0A192F, #0F3B5C);
+            background-image: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1920');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-blend-mode: overlay;
         }
-        .navbar { background-color: var(--navy-deep) !important; }
+        
+        /* Overlay for readability */
+        .page-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 25, 47, 0.85);
+            z-index: 0;
+        }
+        
+        .navbar { 
+            background: rgba(10, 25, 47, 0.95) !important;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
         
         .tracking-card {
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
             margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
         }
+        
         .card-header-custom {
             background: linear-gradient(135deg, var(--navy-deep), var(--navy-medium));
             color: white;
-            padding: 20px;
+            padding: 25px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header-custom::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(201, 160, 61, 0.1);
+            border-radius: 50%;
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        .card-header-custom h3 {
+            position: relative;
+            z-index: 1;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-30px, -20px) scale(1.1); }
         }
         
         .status-badge {
             display: inline-block;
-            padding: 8px 16px;
-            border-radius: 25px;
+            padding: 8px 18px;
+            border-radius: 30px;
             font-size: 0.85rem;
-            font-weight: bold;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .status-delivered { background: #d4edda; color: #155724; }
-        .status-transit { background: #fff3cd; color: #856404; }
-        .status-pending { background: #f8d7da; color: #721c24; }
-        .status-cleared { background: #d1ecf1; color: #0c5460; }
+        .status-delivered { background: #d4edda; color: #155724; border: 2px solid #28a745; }
+        .status-transit { background: #fff3cd; color: #856404; border: 2px solid #ffc107; }
+        .status-pending { background: #f8d7da; color: #721c24; border: 2px solid #dc3545; }
+        .status-cleared { background: #d1ecf1; color: #0c5460; border: 2px solid #17a2b8; }
         
         .info-card {
-            background: white;
+            background: #f8f9fa;
             border-radius: 12px;
-            padding: 15px;
+            padding: 15px 20px;
             margin-bottom: 15px;
             border-left: 4px solid var(--gold-accent);
+            transition: transform 0.3s;
         }
+        .info-card:hover {
+            transform: translateX(5px);
+        }
+        
         .info-label {
-            font-weight: bold;
+            font-weight: 700;
             color: var(--navy-deep);
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         .info-value {
             font-size: 1rem;
             color: #333;
+            font-weight: 500;
         }
         
         .timeline-container {
@@ -69,7 +129,29 @@
             display: flex;
             margin-bottom: 30px;
             position: relative;
+            animation: slideIn 0.5s ease forwards;
+            opacity: 0;
         }
+        
+        .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+        .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+        .timeline-item:nth-child(5) { animation-delay: 0.5s; }
+        .timeline-item:nth-child(6) { animation-delay: 0.6s; }
+        .timeline-item:nth-child(7) { animation-delay: 0.7s; }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
         .timeline-icon {
             width: 50px;
             height: 50px;
@@ -80,7 +162,10 @@
             margin-right: 20px;
             z-index: 2;
             flex-shrink: 0;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
         .timeline-icon.completed {
             background: var(--navy-medium);
@@ -89,7 +174,8 @@
         .timeline-icon.active {
             background: var(--gold-accent);
             color: var(--navy-deep);
-            animation: pulse 1s infinite;
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 4px 25px rgba(201, 160, 61, 0.5);
         }
         .timeline-icon.pending {
             background: #e0e0e0;
@@ -100,10 +186,14 @@
             background: white;
             padding: 15px 20px;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+        }
+        .timeline-content:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
         .timeline-title {
-            font-weight: bold;
+            font-weight: 700;
             color: var(--navy-deep);
             margin-bottom: 5px;
         }
@@ -129,16 +219,53 @@
             background: var(--navy-medium);
         }
         
-        .help-section {
-            text-align: center;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
+        }
+        
+        .help-section {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255,255,255,0.8);
+            position: relative;
+            z-index: 1;
+        }
+        .help-section a {
+            color: var(--gold-accent);
+        }
+        
+        /* Tracking search input */
+        .form-control-lg {
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            padding: 14px 20px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .form-control-lg:focus {
+            border-color: var(--gold-accent);
+            box-shadow: 0 0 0 0.25rem rgba(201, 160, 61, 0.25);
+        }
+        .btn-primary {
+            background-color: var(--navy-medium);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: var(--navy-deep);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .partner-alert {
+            border-radius: 12px;
+            border-left: 4px solid var(--gold-accent);
+            background: rgba(255, 255, 255, 0.95);
         }
         
         @media (max-width: 768px) {
@@ -151,23 +278,28 @@
             .timeline-connector {
                 display: none;
             }
+            .card-header-custom h3 {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Page Overlay -->
+    <div class="page-overlay"></div>
+    
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/"><i class="fas fa-shipping-fast me-2"></i>DeeJohnson Logistics</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="/admin">Admin</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-5 pt-4">
+    <div class="container mt-5 pt-4" style="position: relative; z-index: 1;">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <!-- Tracking Search Card -->
@@ -183,11 +315,11 @@
                                 <div class="input-group input-group-lg">
                                     <input type="text" name="tracking_code" class="form-control" 
                                            placeholder="e.g., DJL-2024-ABC12 or INT-UK-2024-123456" required>
-                                    <button type="submit" class="btn btn-primary px-4" style="background-color: var(--navy-medium);">
+                                    <button type="submit" class="btn btn-primary px-4">
                                         <i class="fas fa-search"></i> Track
                                     </button>
                                 </div>
-                                <small class="text-muted">Your DeeJohnson tracking code starts with DJL- or INT-</small>
+                                <small class="text-muted"><i class="fas fa-info-circle"></i> Your DeeJohnson tracking code starts with DJL- or INT-</small>
                             </div>
                         </form>
 
@@ -206,7 +338,7 @@
                             </div>
                             
                             <!-- Main Status Card -->
-                            <div class="info-card mb-4">
+                            <div class="info-card">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="info-label">Tracking Code</div>
@@ -228,11 +360,11 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- ========================================== -->
-                            <!-- PARTNER COURIER DISPLAY - FIXED ✅         -->
+                            <!-- PARTNER COURIER DISPLAY - KEPT UNCHANGED   -->
                             <!-- ========================================== -->
-                            <div class="alert alert-info mt-3" style="border-left: 4px solid var(--gold-accent);">
+                            <div class="alert alert-info partner-alert mt-3">
                                 <div class="d-flex align-items-start">
                                     <i class="fas fa-globe fa-2x me-3" style="color: var(--gold-accent);"></i>
                                     <div class="flex-grow-1">
@@ -265,7 +397,7 @@
 
                             <!-- Original Courier Tracking for Incoming -->
                             {% if shipment.partner_courier_original and shipment.partner_tracking_original %}
-                            <div class="alert alert-secondary mt-3" style="border-left: 4px solid #6c757d;">
+                            <div class="alert alert-secondary partner-alert mt-3">
                                 <div class="d-flex align-items-start">
                                     <i class="fas fa-box fa-2x me-3" style="color: #6c757d;"></i>
                                     <div class="flex-grow-1">
@@ -291,21 +423,21 @@
 
                             <!-- Delivery Address for Incoming -->
                             {% if shipment.delivery_address %}
-                            <div class="alert alert-secondary mt-3" style="border-left: 4px solid var(--gold-accent);">
+                            <div class="alert alert-secondary mt-3" style="border-left: 4px solid var(--gold-accent); background: #f8f9fa;">
                                 <i class="fas fa-map-marker-alt"></i>
                                 <strong>Delivery Address:</strong> {{ shipment.delivery_address }}
                             </div>
                             {% endif %}
                             
                             <!-- ========================================== -->
-                            <!-- FULL TIMELINE - MOVES FORWARD WITH STATUS   -->
+                            <!-- TIMELINE - KEPT EXACTLY AS IT WAS           -->
                             <!-- ========================================== -->
                             <h5 class="mb-3 mt-4"><i class="fas fa-history"></i> Shipment Timeline</h5>
                             <div class="timeline-container">
                                 
                                 {% set status_lower = shipment.status.lower() %}
                                 
-                                <!-- Step 1: Registered (Always Completed) -->
+                                <!-- Step 1: Registered -->
                                 <div class="timeline-item">
                                     <div class="timeline-icon completed">
                                         <i class="fas fa-check"></i>
@@ -374,7 +506,7 @@
                                     <div class="timeline-connector {% if is_customs %}completed{% endif %}"></div>
                                 </div>
                                 
-                                <!-- Step 5: Partner Courier (International Handover) -->
+                                <!-- Step 5: Partner Courier -->
                                 {% set has_partner = shipment.partner_courier and shipment.partner_tracking %}
                                 {% set is_handed = has_partner or 'handed' in status_lower or 'arrived' in status_lower or 'out for delivery' in status_lower or 'delivered' in status_lower %}
                                 <div class="timeline-item">
@@ -436,8 +568,8 @@
                             </div>
                             
                             <!-- Shipment Details Card -->
-                            <div class="card mt-4">
-                                <div class="card-header bg-light">
+                            <div class="card mt-4" style="border-radius: 15px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+                                <div class="card-header bg-light" style="border-bottom: 2px solid var(--gold-accent);">
                                     <h6 class="mb-0"><i class="fas fa-info-circle"></i> Shipment Details</h6>
                                 </div>
                                 <div class="card-body">
@@ -477,9 +609,9 @@
                 
                 <!-- Help Section -->
                 <div class="help-section">
-                    <p class="text-muted">
+                    <p>
                         <i class="fas fa-question-circle"></i> Need help? 
-                        <a href="/#contact" class="text-decoration-none">Contact our support team</a>
+                        <a href="/#contact">Contact our support team</a>
                     </p>
                 </div>
             </div>
