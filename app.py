@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timezone
 import random
 import string
 import hashlib
@@ -62,7 +62,7 @@ class Shipment(db.Model):
     estimated_delivery = db.Column(db.String(100))
     status = db.Column(db.String(200))
     current_location = db.Column(db.String(100))
-    last_update = db.Column(db.DateTime, default=datetime.utcnow)
+    last_update = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     partner_courier = db.Column(db.String(50))
     partner_tracking = db.Column(db.String(50))
     notes = db.Column(db.Text)
@@ -84,13 +84,13 @@ class Review(db.Model):
     location = db.Column(db.String(50))
     rating = db.Column(db.Integer)
     comment = db.Column(db.Text)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -98,7 +98,7 @@ class Notification(db.Model):
     customer_email = db.Column(db.String(100))
     customer_phone = db.Column(db.String(20))
     message = db.Column(db.Text)
-    sent_at = db.Column(db.DateTime, default=datetime.utcnow)
+    sent_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     sent_via = db.Column(db.String(20))
 
 class Customer(db.Model):
@@ -112,8 +112,8 @@ class Customer(db.Model):
     total_shipments = db.Column(db.Integer, default=0)
     total_spent = db.Column(db.Float, default=0)
     notes = db.Column(db.Text)
-    first_shipment = db.Column(db.DateTime, default=datetime.utcnow)
-    last_shipment = db.Column(db.DateTime, default=datetime.utcnow)
+    first_shipment = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    last_shipment = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     is_active = db.Column(db.Boolean, default=True)    
 
 # ============================================
@@ -269,7 +269,7 @@ def calculate_estimated_delivery(origin, destination):
         days = base_days
     
     from datetime import timedelta
-    est_date = datetime.now() + timedelta(days=days)
+    est_date = datetime.now(timezone.utc) + timedelta(days=days)
     return est_date.strftime("%B %d, %Y")
 
 # ============================================
@@ -386,19 +386,27 @@ def admin():
             if shipment:
                 shipment.status = request.form.get('status')
                 shipment.current_location = request.form.get('current_location')
-                shipment.last_update = datetime.utcnow()
+                shipment.last_update = datetime.now(timezone.utc)
                 shipment.notes = request.form.get('notes')
                 
-                partner = request.form.get('partner_courier')
-                partner_code = request.form.get('partner_tracking')
+                # Get partner courier fields from form
+                partner = request.form.get('partner_courier', '')
+                partner_code = request.form.get('partner_tracking', '')
+
+                print(f"🔍 Partner from form: '{partner}'")
+                print(f"🔍 Tracking from form: '{partner_code}'")
+
                 if partner and partner_code:
                     shipment.partner_courier = partner
                     shipment.partner_tracking = partner_code
+                    print(f"✅ Saved partner: {partner} - {partner_code}")
+                else:
+                    print("⚠️ No partner courier data received")
                 
                 db.session.commit()
                 flash(f'✅ Status updated for {tracking_code}', 'success')
             else:
-                flash('❌ Tracking code not found!', 'danger')        
+                flash('❌ Tracking code not found!', 'danger')
                 
         elif action == 'add_review':
             new_review = Review(
@@ -614,7 +622,7 @@ def restore_shipment():
         estimated_delivery="June 4, 2026",
         status="Picked up from customer",
         current_location="Ibadan",
-        last_update=datetime.utcnow()
+        last_update=datetime.now(timezone.utc)
     )
     
     db.session.add(new_shipment)
@@ -663,7 +671,7 @@ def admin_edit_shipment(shipment_id):
             shipment.partner_courier = partner_courier
             shipment.partner_tracking = partner_tracking
         
-        shipment.last_update = datetime.utcnow()
+        shipment.last_update = datetime.now(timezone.utc)
         db.session.commit()
         
         flash(f'✅ Shipment {shipment.tracking_code} updated successfully!', 'success')
