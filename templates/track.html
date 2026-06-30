@@ -587,9 +587,6 @@
                                             <table class="table table-sm table-borderless">
                                                 <tr><th width="40%">Origin:</th><td>{{ shipment.origin }}</td></tr>
                                                 <tr><th>Destination:</th><td>{{ shipment.destination }}</td></tr>
-                                                {% if shipment.estimated_delivery %}
-                                                <tr><th>Est. Delivery:</th><td>{{ shipment.estimated_delivery }}</td></tr>
-                                                {% endif %}
                                                 <tr><th>Last Update:</th><td>{{ shipment.last_update.strftime('%Y-%m-%d %H:%M') }}</td></tr>
                                             </table>
                                         </div>
