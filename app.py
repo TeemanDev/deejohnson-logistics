@@ -619,6 +619,274 @@ def restore_shipment():
     <a href='/admin/login'>Go to Admin Panel</a>
     """
 
+# ============================================
+# RESTORE ALL SHIPMENTS ROUTE (NEW)
+# ============================================
+
+@app.route('/restore-all-shipments')
+def restore_all_shipments():
+    """Restore all 8 shipments from the Excel data"""
+    from datetime import datetime
+    
+    # List of all shipments from your Excel file
+    shipments_data = [
+        # 1. Iyabo Odueyingbo
+        {
+            'tracking_code': 'DJL-2026-ZOEAY',
+            'shipment_direction': 'outgoing',
+            'customer_name': 'Iyabo Odueyingbo',
+            'customer_email': 'emmanueltee@hotmail.com',
+            'customer_phone': '+447943004101',
+            'origin': 'Ibadan',
+            'destination': 'United Kingdom',
+            'package_type': 'Parcel',
+            'package_weight': 7.0,
+            'status': 'Customs clearance in progress',
+            'current_location': 'Lagos Hub',
+            'last_update': datetime(2026, 6, 29, 13, 58, 0),
+            'partner_courier': None,
+            'partner_tracking': None
+        },
+        
+        # 2. Oluwadamilare Oloyede
+        {
+            'tracking_code': 'DJL-2026-6URUQ',
+            'shipment_direction': 'outgoing',
+            'customer_name': 'Oluwadamilare Oloyede',
+            'customer_email': 'kolapastor62@yahoo.co.uk',
+            'customer_phone': '+447950711976',
+            'origin': 'Ibadan',
+            'destination': 'United Kingdom',
+            'package_type': 'Parcel',
+            'package_weight': 14.0,
+            'status': 'In transit internationally',
+            'current_location': 'In transit to United kingdom',
+            'last_update': datetime(2026, 6, 23, 9, 29, 0),
+            'partner_courier': None,
+            'partner_tracking': None
+        },
+        
+        # 3. Olumide Adejumo
+        {
+            'tracking_code': 'DJL-2026-BBZTG',
+            'shipment_direction': 'outgoing',
+            'customer_name': 'Olumide Adejumo',
+            'customer_email': 'molumide74@yahoo.com',
+            'customer_phone': '+447445921438',
+            'origin': 'Ibadan',
+            'destination': 'United Kingdom',
+            'package_type': 'Parcel',
+            'package_weight': 24.4,
+            'status': 'Delivered successfully',
+            'current_location': 'United Kingdom',
+            'last_update': datetime(2026, 6, 26, 12, 4, 0),
+            'partner_courier': None,
+            'partner_tracking': None
+        },
+        
+        # 4. Favour Ibirogba Taiwo
+        {
+            'tracking_code': 'DJL-2026-3CHNJ',
+            'shipment_direction': 'outgoing',
+            'customer_name': 'Favour Ibirogba Taiwo',
+            'customer_email': 'favouribirogba0@gmail.com',
+            'customer_phone': '+447809162523',
+            'origin': '-',
+            'destination': 'United Kingdom',
+            'package_type': 'Parcel',
+            'package_weight': 10.0,
+            'status': 'Delivered successfully',
+            'current_location': 'United Kingdom',
+            'last_update': datetime(2026, 6, 26, 12, 5, 0),
+            'partner_courier': None,
+            'partner_tracking': None
+        },
+        
+        # 5. Ezekiel Rhoda
+        {
+            'tracking_code': 'DJL-2026-Z1J5Q',
+            'shipment_direction': 'outgoing',
+            'customer_name': 'Ezekiel Rhoda',
+            'customer_email': 'ezekielrhoda@gmail.com',
+            'customer_phone': '+447908030466',
+            'origin': 'Ibadan',
+            'destination': 'United Kingdom',
+            'package_type': 'Parcel',
+            'package_weight': 20.0,
+            'status': 'Delivered successfully',
+            'current_location': 'United Kingdom',
+            'last_update': datetime(2026, 6, 26, 15, 35, 0),
+            'partner_courier': None,
+            'partner_tracking': None
+        },
+        
+        # 6. Joseph Loseyi (Incoming from Canada)
+        {
+            'tracking_code': 'INT-CA-2026-457520',
+            'shipment_direction': 'incoming',
+            'customer_name': 'Joseph Loseyi',
+            'customer_email': '-',
+            'customer_phone': '+1 (204) 558-9160',
+            'origin': 'Canada',
+            'destination': 'Lagos',
+            'package_type': 'Parcel',
+            'package_weight': 2.0,
+            'status': 'Shipped from origin country',
+            'current_location': 'Shipped from origin country',
+            'last_update': datetime(2026, 6, 11, 10, 33, 0),
+            'partner_courier': None,
+            'partner_tracking': None,
+            'origin_country': 'Canada',
+            'partner_courier_original': None,
+            'partner_tracking_original': None
+        },
+        
+        # 7. Mr. Chris (Incoming from UK)
+        {
+            'tracking_code': 'INT-UK-2026-479432',
+            'shipment_direction': 'incoming',
+            'customer_name': 'Mr. Chris',
+            'customer_email': '-',
+            'customer_phone': '+447570149032',
+            'origin': 'United Kingdom',
+            'destination': 'Lagos',
+            'package_type': 'Parcel',
+            'package_weight': 24.0,
+            'status': 'Delivered successfully',
+            'current_location': 'Lagos',
+            'last_update': datetime(2026, 6, 23, 9, 16, 0),
+            'partner_courier': None,
+            'partner_tracking': None,
+            'origin_country': 'UK',
+            'partner_courier_original': 'Royal Mail',
+            'partner_tracking_original': None
+        },
+        
+        # 8. Areo Tolulope B
+        {
+            'tracking_code': 'DJL-2026-HXESB',
+            'shipment_direction': 'outgoing',
+            'customer_name': 'Areo Tolulope B',
+            'customer_email': 'toluare123@gmail.com',
+            'customer_phone': '+447833889142',
+            'origin': 'Ibadan',
+            'destination': 'Wolverhampton, United Kingdom',
+            'package_type': 'Parcel',
+            'package_weight': 10.0,
+            'status': 'Delivered successfully',
+            'current_location': 'Wolverhampton, United Kingdom',
+            'last_update': datetime(2026, 6, 23, 9, 19, 0),
+            'partner_courier': 'FedEx',
+            'partner_tracking': None
+        }
+    ]
+    
+    count_added = 0
+    skipped = 0
+    
+    for data in shipments_data:
+        # Check if tracking code already exists
+        existing = Shipment.query.filter_by(tracking_code=data['tracking_code']).first()
+        if existing:
+            skipped += 1
+            continue
+        
+        # Create shipment with all available fields
+        shipment = Shipment(
+            tracking_code=data['tracking_code'],
+            shipment_direction=data.get('shipment_direction', 'outgoing'),
+            customer_name=data['customer_name'],
+            customer_email=data.get('customer_email'),
+            customer_phone=data.get('customer_phone'),
+            origin=data['origin'],
+            destination=data['destination'],
+            package_type=data['package_type'],
+            package_weight=data['package_weight'],
+            status=data['status'],
+            current_location=data['current_location'],
+            last_update=data['last_update'],
+            partner_courier=data.get('partner_courier'),
+            partner_tracking=data.get('partner_tracking'),
+            origin_country=data.get('origin_country'),
+            partner_courier_original=data.get('partner_courier_original'),
+            partner_tracking_original=data.get('partner_tracking_original')
+        )
+        db.session.add(shipment)
+        count_added += 1
+    
+    # Commit all changes
+    db.session.commit()
+    
+    # Generate HTML response
+    html_response = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Restore Shipments</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body {{ 
+                background: linear-gradient(135deg, #0A192F, #0F3B5C); 
+                min-height: 100vh; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center;
+                color: white;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }}
+            .card {{
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 20px;
+                padding: 40px;
+                max-width: 600px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                color: #333;
+            }}
+            .success-icon {{
+                font-size: 4rem;
+                color: #28a745;
+                margin-bottom: 20px;
+            }}
+            .btn-primary {{ 
+                background-color: #0F3B5C; 
+                border: none; 
+                padding: 12px 30px;
+                border-radius: 10px;
+            }}
+            .btn-primary:hover {{ background-color: #0A192F; }}
+        </style>
+    </head>
+    <body>
+        <div class="card text-center">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="mb-3">✅ {count_added} Shipments Restored!</h2>
+            <p class="lead">All shipments have been added to the database successfully.</p>
+            
+            <div class="alert alert-success mb-4">
+                <strong>📦 {count_added} new shipments added</strong><br>
+                <small class="text-muted">Skipped {skipped} existing shipments</small>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <a href="/admin" class="btn btn-primary">
+                    <i class="fas fa-tachometer-alt"></i> Go to Admin Dashboard
+                </a>
+                <a href="/track" class="btn btn-outline-primary">
+                    <i class="fas fa-search"></i> Track a Package
+                </a>
+            </div>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </body>
+    </html>
+    """
+    
+    return html_response
+
 @app.route('/admin/shipment/edit/<int:shipment_id>', methods=['GET', 'POST'])
 @login_required
 def admin_edit_shipment(shipment_id):
