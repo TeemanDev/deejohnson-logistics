@@ -59,7 +59,6 @@ class Shipment(db.Model):
     destination = db.Column(db.String(100))
     package_type = db.Column(db.String(50))
     package_weight = db.Column(db.Float, default=0)
-    estimated_delivery = db.Column(db.String(100))
     status = db.Column(db.String(200))
     current_location = db.Column(db.String(100))
     last_update = db.Column(db.DateTime, default=datetime.now(timezone.utc))
@@ -260,18 +259,6 @@ def generate_tracking_code():
     random_chars = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
     return f"DJL-{year}-{random_chars}"
 
-def calculate_estimated_delivery(origin, destination):
-    """Calculate estimated delivery date based on route"""
-    base_days = 3
-    if "international" in destination.lower() or "usa" in destination.lower() or "uk" in destination.lower():
-        days = 7
-    else:
-        days = base_days
-    
-    from datetime import timedelta
-    est_date = datetime.now(timezone.utc) + timedelta(days=days)
-    return est_date.strftime("%B %d, %Y")
-
 # ============================================
 # ROUTES
 # ============================================
@@ -355,10 +342,6 @@ def admin():
         
         if action == 'create_shipment':
             tracking_code = generate_tracking_code()
-            estimated_date = calculate_estimated_delivery(
-                request.form.get('origin'), 
-                request.form.get('destination')
-            )
             
             new_shipment = Shipment(
                 tracking_code=tracking_code,
@@ -369,7 +352,6 @@ def admin():
                 destination=request.form.get('destination'),
                 package_type=request.form.get('package_type'),
                 package_weight=float(request.form.get('package_weight', 0)),
-                estimated_delivery=estimated_date,
                 status='Package registered - Awaiting pickup',
                 current_location=request.form.get('origin')
             )
@@ -505,8 +487,7 @@ def get_shipment(code):
             'location': shipment.current_location,
             'last_update': shipment.last_update.strftime('%Y-%m-%d %H:%M'),
             'partner_courier': shipment.partner_courier,
-            'partner_tracking': shipment.partner_tracking,
-            'estimated_delivery': shipment.estimated_delivery
+            'partner_tracking': shipment.partner_tracking
         })
     return jsonify({'error': 'Not found'}), 404
 
@@ -619,7 +600,6 @@ def restore_shipment():
         destination="Wolverhampton, United Kingdom",
         package_type="Parcel",
         package_weight=10.0,
-        estimated_delivery="June 4, 2026",
         status="Picked up from customer",
         current_location="Ibadan",
         last_update=datetime.now(timezone.utc)
@@ -652,7 +632,6 @@ def admin_edit_shipment(shipment_id):
         shipment.destination = request.form.get('destination')
         shipment.package_type = request.form.get('package_type')
         shipment.package_weight = float(request.form.get('package_weight', 0))
-        shipment.estimated_delivery = request.form.get('estimated_delivery')
         shipment.status = request.form.get('status')
         shipment.current_location = request.form.get('current_location')
         shipment.notes = request.form.get('notes')
