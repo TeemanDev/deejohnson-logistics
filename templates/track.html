@@ -25,7 +25,6 @@
             background-blend-mode: overlay;
         }
         
-        /* Overlay for readability */
         .page-overlay {
             position: fixed;
             top: 0;
@@ -140,6 +139,10 @@
         .timeline-item:nth-child(5) { animation-delay: 0.5s; }
         .timeline-item:nth-child(6) { animation-delay: 0.6s; }
         .timeline-item:nth-child(7) { animation-delay: 0.7s; }
+        .timeline-item:nth-child(8) { animation-delay: 0.8s; }
+        .timeline-item:nth-child(9) { animation-delay: 0.9s; }
+        .timeline-item:nth-child(10) { animation-delay: 1.0s; }
+        .timeline-item:nth-child(11) { animation-delay: 1.1s; }
         
         @keyframes slideIn {
             from {
@@ -249,7 +252,6 @@
             color: var(--gold-accent);
         }
         
-        /* Tracking search input */
         .form-control-lg {
             border-radius: 12px;
             border: 2px solid #e0e0e0;
@@ -298,7 +300,6 @@
     </style>
 </head>
 <body>
-    <!-- Page Overlay -->
     <div class="page-overlay"></div>
     
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
@@ -315,7 +316,6 @@
     <div class="container mt-5 pt-4" style="position: relative; z-index: 1;">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <!-- Tracking Search Card -->
                 <div class="tracking-card">
                     <div class="card-header-custom">
                         <h3 class="mb-0"><i class="fas fa-search"></i> Track Your Shipment</h3>
@@ -337,9 +337,7 @@
                         </form>
 
                         {% if shipment %}
-                        <!-- Shipment Found -->
                         <div class="mt-4">
-                            <!-- Shipment Type Badge -->
                             <div class="mb-3">
                                 {% if shipment.shipment_direction == 'incoming' %}
                                     <span class="badge bg-info"><i class="fas fa-download"></i> Incoming International Package</span>
@@ -350,7 +348,6 @@
                                 {% endif %}
                             </div>
                             
-                            <!-- Main Status Card -->
                             <div class="info-card">
                                 <div class="row">
                                     <div class="col-md-6">
@@ -362,9 +359,9 @@
                                         <div class="info-value">
                                             {% if 'Delivered' in shipment.status %}
                                                 <span class="status-badge status-delivered"><i class="fas fa-check-circle"></i> {{ shipment.status }}</span>
-                                            {% elif 'transit' in shipment.status.lower() %}
+                                            {% elif 'transit' in shipment.status %}
                                                 <span class="status-badge status-transit"><i class="fas fa-truck"></i> {{ shipment.status }}</span>
-                                            {% elif 'customs' in shipment.status.lower() %}
+                                            {% elif 'customs' in shipment.status %}
                                                 <span class="status-badge status-cleared"><i class="fas fa-file-invoice"></i> {{ shipment.status }}</span>
                                             {% else %}
                                                 <span class="status-badge status-pending"><i class="fas fa-clock"></i> {{ shipment.status }}</span>
@@ -374,15 +371,11 @@
                                 </div>
                             </div>
 
-                            <!-- ========================================== -->
-                            <!-- PARTNER COURIER DISPLAY - KEPT UNCHANGED   -->
-                            <!-- ========================================== -->
                             <div class="alert alert-info partner-alert mt-3">
                                 <div class="d-flex align-items-start">
                                     <i class="fas fa-globe fa-2x me-3" style="color: var(--gold-accent);"></i>
                                     <div class="flex-grow-1">
                                         <h5 class="mb-2"><i class="fas fa-truck"></i> International Tracking</h5>
-                                        
                                         {% if shipment.partner_courier and shipment.partner_tracking %}
                                             <p class="mb-1">
                                                 <strong>Partner Courier:</strong> 
@@ -408,7 +401,6 @@
                                 </div>
                             </div>
 
-                            <!-- Original Courier Tracking for Incoming -->
                             {% if shipment.partner_courier_original and shipment.partner_tracking_original %}
                             <div class="alert alert-secondary partner-alert mt-3">
                                 <div class="d-flex align-items-start">
@@ -434,7 +426,6 @@
                             </div>
                             {% endif %}
 
-                            <!-- Delivery Address for Incoming -->
                             {% if shipment.delivery_address %}
                             <div class="alert alert-secondary mt-3" style="border-left: 4px solid var(--gold-accent); background: #f8f9fa;">
                                 <i class="fas fa-map-marker-alt"></i>
@@ -443,153 +434,227 @@
                             {% endif %}
                             
                             <!-- ========================================== -->
-                            <!-- TIMELINE - ONLY ONE ACTIVE STAGE AT A TIME   -->
+                            <!-- TIMELINE - CORRECT 11-STEP SEQUENCE         -->
                             <!-- ========================================== -->
                             <h5 class="mb-3 mt-4"><i class="fas fa-history"></i> Shipment Timeline</h5>
                             <div class="timeline-container">
                                 
-                                {% set status_lower = shipment.status.lower() %}
-                                
-                                <!-- Determine the active stage (only 1) -->
-                                {% if 'delivered' in status_lower %}
+                                <!-- Use the original status text directly -->
+                                {% set status_text = shipment.status %}
+
+                                <!-- Fuzzy matching for correct 11-step order -->
+                                {% if 'Delivered' in status_text or 'delivered' in status_text %}
+                                    {% set active_stage = 11 %}
+                                {% elif 'Out for delivery' in status_text or 'out for delivery' in status_text %}
+                                    {% set active_stage = 10 %}
+                                {% elif 'Handed' in status_text or 'handed' in status_text or 'Partner' in status_text or 'partner' in status_text %}
+                                    {% set active_stage = 9 %}
+                                {% elif 'Arrived at destination' in status_text or 'arrived at destination' in status_text %}
+                                    {% set active_stage = 8 %}
+                                {% elif 'In transit internationally' in status_text or 'in transit internationally' in status_text or 'International' in status_text or 'international' in status_text %}
                                     {% set active_stage = 7 %}
-                                {% elif 'out for delivery' in status_lower %}
+                                {% elif 'Cleared' in status_text or 'cleared' in status_text %}
                                     {% set active_stage = 6 %}
-                                {% elif 'handed' in status_lower or 'partner' in status_lower %}
+                                {% elif 'Customs' in status_text or 'customs' in status_text %}
                                     {% set active_stage = 5 %}
-                                {% elif 'customs' in status_lower %}
+                                {% elif 'Arrived at Lagos' in status_text or 'arrived at lagos' in status_text %}
                                     {% set active_stage = 4 %}
-                                {% elif 'transit' in status_lower %}
+                                {% elif 'Transit' in status_text or 'transit' in status_text %}
                                     {% set active_stage = 3 %}
-                                {% elif 'picked' in status_lower or 'pickup' in status_lower %}
+                                {% elif 'Picked' in status_text or 'picked' in status_text or 'Pickup' in status_text or 'pickup' in status_text %}
                                     {% set active_stage = 2 %}
                                 {% else %}
                                     {% set active_stage = 1 %}
                                 {% endif %}
-                                
-                                <!-- Step 1: Registered -->
+
+                                <!-- Step 1: Package registered -->
                                 <div class="timeline-item">
-                                    <div class="timeline-icon {% if active_stage >= 1 %}completed{% else %}pending{% endif %}">
-                                        {% if active_stage > 1 %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
+                                    <div class="timeline-icon {% if active_stage > 1 %}completed{% elif active_stage == 1 %}active{% else %}pending{% endif %}">
+                                        {% if active_stage > 1 %}<i class="fas fa-check"></i>{% elif active_stage == 1 %}<i class="fas fa-clipboard-list"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
                                     </div>
                                     <div class="timeline-content">
-                                        <div class="timeline-title">Order Registered</div>
-                                        <div class="timeline-date">{{ shipment.last_update.strftime('%B %d, %Y - %I:%M %p') }}</div>
-                                        <div class="timeline-description">Your shipment has been registered with tracking code: {{ shipment.tracking_code }}</div>
+                                        <div class="timeline-title">Package Registered</div>
+                                        <div class="timeline-date">
+                                            {% if active_stage >= 1 %}{{ shipment.last_update.strftime('%B %d, %Y - %I:%M %p') }}{% else %}Pending{% endif %}
+                                        </div>
+                                        <div class="timeline-description">
+                                            {% if active_stage > 1 %}Package registration completed{% elif active_stage == 1 %}Package is currently being registered{% else %}Awaiting registration{% endif %}
+                                        </div>
                                     </div>
                                     <div class="timeline-connector {% if active_stage > 1 %}completed{% elif active_stage == 1 %}active{% else %}pending{% endif %}"></div>
                                 </div>
-                                
-                                <!-- Step 2: Picked Up -->
+
+                                <!-- Step 2: Picked up -->
                                 <div class="timeline-item">
                                     <div class="timeline-icon {% if active_stage > 2 %}completed{% elif active_stage == 2 %}active{% else %}pending{% endif %}">
                                         {% if active_stage > 2 %}<i class="fas fa-check"></i>{% elif active_stage == 2 %}<i class="fas fa-box"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
                                     </div>
                                     <div class="timeline-content">
-                                        <div class="timeline-title">Picked Up</div>
+                                        <div class="timeline-title">Picked Up from Customer</div>
                                         <div class="timeline-date">
                                             {% if active_stage > 2 %}{{ shipment.last_update.strftime('%B %d, %Y') }}{% elif active_stage == 2 %}In progress...{% else %}Pending{% endif %}
                                         </div>
                                         <div class="timeline-description">
-                                            {% if active_stage > 2 %}Package collected from {{ shipment.customer_name }}{% elif active_stage == 2 %}Package is being picked up{% else %}Awaiting pickup{% endif %}
+                                            {% if active_stage > 2 %}Package collected from {{ shipment.customer_name }}{% elif active_stage == 2 %}Package is currently being picked up{% else %}Awaiting pickup{% endif %}
                                         </div>
                                     </div>
                                     <div class="timeline-connector {% if active_stage > 2 %}completed{% elif active_stage == 2 %}active{% else %}pending{% endif %}"></div>
                                 </div>
-                                
-                                <!-- Step 3: In Transit -->
+
+                                <!-- Step 3: In transit to Lagos -->
                                 <div class="timeline-item">
                                     <div class="timeline-icon {% if active_stage > 3 %}completed{% elif active_stage == 3 %}active{% else %}pending{% endif %}">
                                         {% if active_stage > 3 %}<i class="fas fa-check"></i>{% elif active_stage == 3 %}<i class="fas fa-truck"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
                                     </div>
                                     <div class="timeline-content">
-                                        <div class="timeline-title">In Transit</div>
+                                        <div class="timeline-title">In Transit to Lagos</div>
                                         <div class="timeline-date">
                                             {% if active_stage > 3 %}{{ shipment.last_update.strftime('%B %d, %Y') }}{% elif active_stage == 3 %}In progress...{% else %}Pending{% endif %}
                                         </div>
                                         <div class="timeline-description">
-                                            {% if active_stage > 3 %}Package is on the move{% elif active_stage == 3 %}Package is currently in transit{% else %}Awaiting transit{% endif %}
+                                            {% if active_stage > 3 %}Package has arrived at Lagos{% elif active_stage == 3 %}Package is currently in transit to Lagos{% else %}Awaiting transit to Lagos{% endif %}
                                         </div>
                                     </div>
                                     <div class="timeline-connector {% if active_stage > 3 %}completed{% elif active_stage == 3 %}active{% else %}pending{% endif %}"></div>
                                 </div>
-                                
-                                <!-- Step 4: Customs Clearance -->
+
+                                <!-- Step 4: Arrived at Lagos Airport -->
                                 <div class="timeline-item">
                                     <div class="timeline-icon {% if active_stage > 4 %}completed{% elif active_stage == 4 %}active{% else %}pending{% endif %}">
-                                        {% if active_stage > 4 %}<i class="fas fa-check"></i>{% elif active_stage == 4 %}<i class="fas fa-file-invoice"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
+                                        {% if active_stage > 4 %}<i class="fas fa-check"></i>{% elif active_stage == 4 %}<i class="fas fa-plane-arrival"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
                                     </div>
                                     <div class="timeline-content">
-                                        <div class="timeline-title">Customs Clearance</div>
+                                        <div class="timeline-title">Arrived at Lagos Airport</div>
                                         <div class="timeline-date">
                                             {% if active_stage > 4 %}{{ shipment.last_update.strftime('%B %d, %Y') }}{% elif active_stage == 4 %}In progress...{% else %}Pending{% endif %}
                                         </div>
                                         <div class="timeline-description">
-                                            {% if active_stage > 4 %}
-                                                {% if 'cleared' in shipment.customs_status %}✅ Customs cleared{% elif 'held' in shipment.customs_status %}⚠️ Held at customs{% else %}Customs processing complete{% endif %}
-                                            {% elif active_stage == 4 %}
-                                                Customs clearance in progress
-                                            {% else %}
-                                                Awaiting arrival at customs
-                                            {% endif %}
+                                            {% if active_stage > 4 %}Package has departed Lagos Airport{% elif active_stage == 4 %}Package has arrived at Lagos Airport{% else %}Awaiting arrival at Lagos Airport{% endif %}
                                         </div>
                                     </div>
                                     <div class="timeline-connector {% if active_stage > 4 %}completed{% elif active_stage == 4 %}active{% else %}pending{% endif %}"></div>
                                 </div>
-                                
-                                <!-- Step 5: Partner Courier -->
+
+                                <!-- Step 5: Customs clearance -->
                                 <div class="timeline-item">
                                     <div class="timeline-icon {% if active_stage > 5 %}completed{% elif active_stage == 5 %}active{% else %}pending{% endif %}">
-                                        {% if active_stage > 5 %}<i class="fas fa-check"></i>{% elif active_stage == 5 %}<i class="fas fa-handshake"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
+                                        {% if active_stage > 5 %}<i class="fas fa-check"></i>{% elif active_stage == 5 %}<i class="fas fa-file-invoice"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
                                     </div>
                                     <div class="timeline-content">
-                                        <div class="timeline-title">Handed to Partner Courier</div>
+                                        <div class="timeline-title">Customs Clearance</div>
                                         <div class="timeline-date">
                                             {% if active_stage > 5 %}{{ shipment.last_update.strftime('%B %d, %Y') }}{% elif active_stage == 5 %}In progress...{% else %}Pending{% endif %}
                                         </div>
                                         <div class="timeline-description">
-                                            {% if active_stage > 5 %}
-                                                Package with <strong>{{ shipment.partner_courier }}</strong>
-                                                <br>Tracking: {{ shipment.partner_tracking }}
-                                            {% elif active_stage == 5 %}
-                                                Awaiting handover to partner courier
-                                            {% else %}
-                                                Will be handed to partner courier
-                                            {% endif %}
+                                            {% if active_stage > 5 %}Customs processing complete{% elif active_stage == 5 %}Customs clearance is currently in progress{% else %}Awaiting customs clearance{% endif %}
                                         </div>
                                     </div>
                                     <div class="timeline-connector {% if active_stage > 5 %}completed{% elif active_stage == 5 %}active{% else %}pending{% endif %}"></div>
                                 </div>
-                                
-                                <!-- Step 6: Out for Delivery -->
+
+                                <!-- Step 6: Cleared - Awaiting international flight -->
                                 <div class="timeline-item">
                                     <div class="timeline-icon {% if active_stage > 6 %}completed{% elif active_stage == 6 %}active{% else %}pending{% endif %}">
-                                        {% if active_stage > 6 %}<i class="fas fa-check"></i>{% elif active_stage == 6 %}<i class="fas fa-truck-fast"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
+                                        {% if active_stage > 6 %}<i class="fas fa-check"></i>{% elif active_stage == 6 %}<i class="fas fa-plane-departure"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
                                     </div>
                                     <div class="timeline-content">
-                                        <div class="timeline-title">Out for Delivery</div>
+                                        <div class="timeline-title">Cleared - Awaiting Flight</div>
                                         <div class="timeline-date">
                                             {% if active_stage > 6 %}{{ shipment.last_update.strftime('%B %d, %Y') }}{% elif active_stage == 6 %}In progress...{% else %}Pending{% endif %}
                                         </div>
                                         <div class="timeline-description">
-                                            {% if active_stage > 6 %}Package is out for final delivery{% elif active_stage == 6 %}Package is currently out for delivery{% else %}Awaiting delivery dispatch{% endif %}
+                                            {% if active_stage > 6 %}Package has departed for international flight{% elif active_stage == 6 %}Package is cleared and awaiting international flight{% else %}Awaiting clearance for international flight{% endif %}
                                         </div>
                                     </div>
                                     <div class="timeline-connector {% if active_stage > 6 %}completed{% elif active_stage == 6 %}active{% else %}pending{% endif %}"></div>
                                 </div>
-                                
-                                <!-- Step 7: Delivered -->
+
+                                <!-- Step 7: In transit internationally -->
                                 <div class="timeline-item">
-                                    <div class="timeline-icon {% if active_stage >= 7 %}completed{% else %}pending{% endif %}">
-                                        {% if active_stage >= 7 %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
+                                    <div class="timeline-icon {% if active_stage > 7 %}completed{% elif active_stage == 7 %}active{% else %}pending{% endif %}">
+                                        {% if active_stage > 7 %}<i class="fas fa-check"></i>{% elif active_stage == 7 %}<i class="fas fa-globe"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
                                     </div>
                                     <div class="timeline-content">
-                                        <div class="timeline-title">Delivered</div>
+                                        <div class="timeline-title">In Transit Internationally</div>
                                         <div class="timeline-date">
-                                            {% if active_stage >= 7 %}{{ shipment.last_update.strftime('%B %d, %Y - %I:%M %p') }}{% else %}Pending{% endif %}
+                                            {% if active_stage > 7 %}{{ shipment.last_update.strftime('%B %d, %Y') }}{% elif active_stage == 7 %}In progress...{% else %}Pending{% endif %}
                                         </div>
                                         <div class="timeline-description">
-                                            {% if active_stage >= 7 %}
+                                            {% if active_stage > 7 %}Package has arrived in destination country{% elif active_stage == 7 %}Package is currently in international transit{% else %}Awaiting international transit{% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="timeline-connector {% if active_stage > 7 %}completed{% elif active_stage == 7 %}active{% else %}pending{% endif %}"></div>
+                                </div>
+
+                                <!-- Step 8: Arrived at destination -->
+                                <div class="timeline-item">
+                                    <div class="timeline-icon {% if active_stage > 8 %}completed{% elif active_stage == 8 %}active{% else %}pending{% endif %}">
+                                        {% if active_stage > 8 %}<i class="fas fa-check"></i>{% elif active_stage == 8 %}<i class="fas fa-flag-checkered"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title">Arrived at Destination</div>
+                                        <div class="timeline-date">
+                                            {% if active_stage > 8 %}{{ shipment.last_update.strftime('%B %d, %Y') }}{% elif active_stage == 8 %}In progress...{% else %}Pending{% endif %}
+                                        </div>
+                                        <div class="timeline-description">
+                                            {% if active_stage > 8 %}Package handed to partner courier{% elif active_stage == 8 %}Package has arrived at destination country{% else %}Awaiting arrival at destination{% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="timeline-connector {% if active_stage > 8 %}completed{% elif active_stage == 8 %}active{% else %}pending{% endif %}"></div>
+                                </div>
+
+                                <!-- Step 9: Handed over to partner courier -->
+                                <div class="timeline-item">
+                                    <div class="timeline-icon {% if active_stage > 9 %}completed{% elif active_stage == 9 %}active{% else %}pending{% endif %}">
+                                        {% if active_stage > 9 %}<i class="fas fa-check"></i>{% elif active_stage == 9 %}<i class="fas fa-handshake"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title">Handed to Partner Courier</div>
+                                        <div class="timeline-date">
+                                            {% if active_stage > 9 %}{{ shipment.last_update.strftime('%B %d, %Y') }}{% elif active_stage == 9 %}In progress...{% else %}Pending{% endif %}
+                                        </div>
+                                        <div class="timeline-description">
+                                            {% if active_stage > 9 %}
+                                                Package handed to <strong>{{ shipment.partner_courier }}</strong>
+                                            {% elif active_stage == 9 %}
+                                                Package is being handed to partner courier
+                                            {% else %}
+                                                Awaiting handover to partner courier
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="timeline-connector {% if active_stage > 9 %}completed{% elif active_stage == 9 %}active{% else %}pending{% endif %}"></div>
+                                </div>
+
+                                <!-- Step 10: Out for delivery -->
+                                <div class="timeline-item">
+                                    <div class="timeline-icon {% if active_stage > 10 %}completed{% elif active_stage == 10 %}active{% else %}pending{% endif %}">
+                                        {% if active_stage > 10 %}<i class="fas fa-check"></i>{% elif active_stage == 10 %}<i class="fas fa-truck-fast"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title">Out for Delivery</div>
+                                        <div class="timeline-date">
+                                            {% if active_stage > 10 %}{{ shipment.last_update.strftime('%B %d, %Y') }}{% elif active_stage == 10 %}In progress...{% else %}Pending{% endif %}
+                                        </div>
+                                        <div class="timeline-description">
+                                            {% if active_stage > 10 %}Package has been delivered{% elif active_stage == 10 %}Package is currently out for delivery{% else %}Awaiting delivery dispatch{% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="timeline-connector {% if active_stage > 10 %}completed{% elif active_stage == 10 %}active{% else %}pending{% endif %}"></div>
+                                </div>
+
+                                <!-- Step 11: Delivered successfully -->
+                                <div class="timeline-item">
+                                    <div class="timeline-icon {% if active_stage >= 11 %}completed{% else %}pending{% endif %}">
+                                        {% if active_stage >= 11 %}<i class="fas fa-check"></i>{% else %}<i class="fas fa-circle"></i>{% endif %}
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title">Delivered Successfully</div>
+                                        <div class="timeline-date">
+                                            {% if active_stage >= 11 %}{{ shipment.last_update.strftime('%B %d, %Y - %I:%M %p') }}{% else %}Pending{% endif %}
+                                        </div>
+                                        <div class="timeline-description">
+                                            {% if active_stage >= 11 %}
                                                 ✅ Package delivered to {{ shipment.destination }}
                                             {% else %}
                                                 Package is still in transit
@@ -597,6 +662,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                             
                             <!-- Shipment Details Card -->
@@ -636,7 +702,6 @@
                     </div>
                 </div>
                 
-                <!-- Help Section -->
                 <div class="help-section">
                     <p>
                         <i class="fas fa-question-circle"></i> Need help? 
