@@ -45,6 +45,7 @@
                                 <label>Origin Country</label>
                                 <select name="origin_country" class="form-control">
                                     <option value="">-- Select Country --</option>
+                                    <option value="NG" {% if shipment.origin_country == 'NG' %}selected{% endif %}>🇳🇬 Ibadan, Nigeria</option>
                                     <option value="UK" {% if shipment.origin_country == 'UK' %}selected{% endif %}>🇬🇧 United Kingdom</option>
                                     <option value="USA" {% if shipment.origin_country == 'USA' %}selected{% endif %}>🇺🇸 United States</option>
                                     <option value="Canada" {% if shipment.origin_country == 'Canada' %}selected{% endif %}>🇨🇦 Canada</option>
