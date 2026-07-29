@@ -113,7 +113,7 @@ class Customer(db.Model):
     notes = db.Column(db.Text)
     first_shipment = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     last_shipment = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-    is_active = db.Column(db.Boolean, default=True)    
+    is_active = db.Column(db.Boolean, default=True)       
 
 # ============================================
 # COURIER INTEGRATION FUNCTIONS
@@ -283,6 +283,17 @@ def track():
             partner_url = get_tracking_url(shipment.partner_courier, shipment.partner_tracking)
             courier_icon = get_courier_icon(shipment.partner_courier)
             courier_color = get_courier_color(shipment.partner_courier)
+        
+        # Check if this is an Express shipment (starts with EXPDJL)
+        if shipment and shipment.tracking_code.startswith('EXPDJL'):
+            return render_template('express_track.html', 
+                                 shipment=shipment, 
+                                 partner_url=partner_url,
+                                 courier_icon=courier_icon,
+                                 courier_color=courier_color,
+                                 get_tracking_url=get_tracking_url,
+                                 get_courier_icon=get_courier_icon,
+                                 get_courier_color=get_courier_color)
     
     return render_template('track.html', 
                          shipment=shipment, 
@@ -640,7 +651,7 @@ def restore_all_shipments():
             'origin': 'Ibadan',
             'destination': 'United Kingdom',
             'package_type': 'Parcel',
-            'package_weight': 7.0,
+            'package_weight': 14.0,
             'status': 'Customs clearance in progress',
             'current_location': 'Lagos Hub',
             'last_update': datetime(2026, 6, 29, 13, 58, 0),
@@ -659,7 +670,7 @@ def restore_all_shipments():
             'destination': 'United Kingdom',
             'package_type': 'Parcel',
             'package_weight': 14.0,
-            'status': 'In transit internationally',
+            'status': 'Handed over to partner courier',
             'current_location': 'In transit to United kingdom',
             'last_update': datetime(2026, 6, 23, 9, 29, 0),
             'partner_courier': None,
@@ -886,6 +897,65 @@ def restore_all_shipments():
     """
     
     return html_response
+
+# ============================================
+# EXPRESS ADMIN ROUTES
+# ============================================
+
+@app.route('/express-admin', methods=['GET', 'POST'])
+@login_required
+def express_admin():
+    new_tracking_code = None
+    new_customer_name = None
+    new_destination = None
+    
+    if request.method == 'POST':
+        action = request.form.get('action')
+        
+        if action == 'create_express_shipment':
+            # Generate EXPDJL + 6 random numbers
+            random_numbers = ''.join(random.choices(string.digits, k=6))
+            tracking_code = f"EXPDJL{random_numbers}"
+            
+            # Calculate delivery date (3-5 days from now)
+            from datetime import timedelta
+            delivery_date = datetime.now(timezone.utc) + timedelta(days=5)
+            formatted_delivery = delivery_date.strftime("%B %d, %Y")
+            
+            # Create the shipment
+            new_shipment = Shipment(
+                tracking_code=tracking_code,
+                customer_name=request.form.get('customer_name'),
+                customer_email=request.form.get('customer_email'),
+                customer_phone=request.form.get('customer_phone'),
+                origin=request.form.get('origin'),
+                destination=request.form.get('destination'),
+                package_type=request.form.get('package_type'),
+                package_weight=float(request.form.get('package_weight', 1.0)),
+                status='Express - Package registered',
+                current_location=request.form.get('origin'),
+                notes=request.form.get('notes'),
+                # Express shipments are outgoing by default
+                shipment_direction='outgoing'
+            )
+            
+            db.session.add(new_shipment)
+            db.session.commit()
+            
+            # Store values to display in the template
+            new_tracking_code = tracking_code
+            new_customer_name = request.form.get('customer_name')
+            new_destination = request.form.get('destination')
+            
+            flash(f'✅ Express shipment created! Tracking Code: {tracking_code}', 'success')
+            
+            # Return the template with the new tracking code
+            return render_template('express_admin.html', 
+                                  new_tracking_code=new_tracking_code,
+                                  new_customer_name=new_customer_name,
+                                  new_destination=new_destination)
+    
+    return render_template('express_admin.html')
 
 @app.route('/admin/shipment/edit/<int:shipment_id>', methods=['GET', 'POST'])
 @login_required
