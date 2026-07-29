@@ -287,12 +287,13 @@
             <form method="POST">
                 <input type="hidden" name="action" value="update_status">
                 
-                <!-- Shipment Type -->
+                <!-- Shipment Type Selection -->
                 <div class="mb-3">
                     <label>Shipment Type</label>
-                    <select name="shipment_type" id="shipmentTypeSelect" class="form-control">
+                    <select name="shipment_type" id="shipmentTypeSelect" class="form-control" onchange="toggleExpressStatus()">
                         <option value="outgoing">Outgoing (DJL-...)</option>
                         <option value="incoming">Incoming (INT-...)</option>
+                        <option value="express">Express (EXPDJL...)</option>
                     </select>
                 </div>
                 
@@ -328,6 +329,14 @@
                             <option>Out for delivery in Nigeria</option>
                             <option>Delivered successfully</option>
                             <option>Held at customs - Documentation needed</option>
+                        </optgroup>
+                        <optgroup label="Express Shipment Status" id="expressStatusGroup" style="display:none;">
+                            <option>Label Created</option>
+                            <option>Received by Courier</option>
+                            <option>Departed Facility</option>
+                            <option>Arrived at Local Sorting Center</option>
+                            <option>Out for Delivery</option>
+                            <option>Delivered</option>
                         </optgroup>
                     </select>
                 </div>
@@ -615,5 +624,20 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
+
+<script>
+function toggleExpressStatus() {
+    const type = document.getElementById('shipmentTypeSelect').value;
+    const expressGroup = document.getElementById('expressStatusGroup');
+    const statusDropdown = document.getElementById('statusDropdown');
+    
+    if (type === 'express') {
+        expressGroup.style.display = 'block';
+        statusDropdown.value = 'Label Created';
+    } else {
+        expressGroup.style.display = 'none';
+    }
+}
+</script>
 </body>
 </html>
