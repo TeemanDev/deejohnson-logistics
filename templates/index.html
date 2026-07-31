@@ -513,8 +513,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="navbar" style="padding-top: 8px; padding-bottom: 8px;">
     <div class="container">
         <!-- Brand / Logo -->
-        <a class="navbar-brand" href="#" style="font-size: 1.7rem; font-weight: 700;">
-            <i class="fas fa-shipping-fast me-2"></i>DeeJohnson Company Nig. Ltd.
+        <a class="navbar-brand" href="#" id="brandLogo" style="font-size: 1.7rem; font-weight: 700;">
+            <i class="fas fa-shipping-fast me-2"></i>
+            <span class="company-name-mobile">DeeJohnson Company Nig. Ltd.</span>
         </a>
         
         <!-- Burger Button -->
@@ -1106,7 +1107,7 @@
                         <!-- Container Ship - Working Image -->
                         <div class="col-12">
                             <div class="image-card">
-                                <img src="https://cdn.pixabay.com/photo/2017/05/10/15/09/ship-2301179_640.jpg" 
+                                <img src="https://images.pexels.com/photos/36834653/pexels-photo-36834653.jpeg?w=600" 
                                     alt="Container ship China to Nigeria" 
                                     class="china-image">
                                 <div class="image-caption">
@@ -2746,89 +2747,134 @@
     </div>
 </footer>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>
-    // Initialize AOS animations
-    AOS.init({
-        duration: 1000,
-        once: true,
-        offset: 100
-    });
+    <!-- ===== SCRIPTS ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS animations
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
 
-    // Hide loader
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-            document.getElementById('loader').style.opacity = '0';
+        // Hide loader
+        window.addEventListener('load', function() {
             setTimeout(function() {
-                document.getElementById('loader').style.display = 'none';
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(function() {
+                    document.getElementById('loader').style.display = 'none';
+                }, 500);
             }, 500);
-        }, 500);
-    });
+        });
 
-    // Navbar scroll effect
-    window.addEventListener('scroll', function() {
-        const navbar = document.getElementById('navbar');
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    });
-
-    // Counter animation
-    const counters = document.querySelectorAll('.counter');
-    const speed = 200;
-
-    const animateCounter = (counter) => {
-        const target = parseInt(counter.getAttribute('data-target'));
-        let count = 0;
-        const updateCount = () => {
-            const increment = target / speed;
-            if (count < target) {
-                count += increment;
-                counter.innerText = Math.ceil(count);
-                setTimeout(updateCount, 20);
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
             } else {
-                counter.innerText = target;
-            }
-        };
-        updateCount();
-    };
-
-    // Trigger counters when in viewport
-    const observerOptions = {
-        threshold: 0.5
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                animateCounter(entry.target);
-                observer.unobserve(entry.target);
+                navbar.classList.remove('scrolled');
             }
         });
-    }, observerOptions);
 
-    counters.forEach(counter => {
-        observer.observe(counter);
-    });
+        // Counter animation
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
 
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+        const animateCounter = (counter) => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            let count = 0;
+            const updateCount = () => {
+                const increment = target / speed;
+                if (count < target) {
+                    count += increment;
+                    counter.innerText = Math.ceil(count);
+                    setTimeout(updateCount, 20);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            updateCount();
+        };
+
+        // Trigger counters when in viewport
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        counters.forEach(counter => {
+            observer.observe(counter);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // ==========================================
+        // ADD THE NEW JAVASCRIPT HERE (BEFORE THE CLOSING)
+        // ==========================================
+        
+        // Toggle company name on mobile when logo is clicked
+        document.getElementById('brandLogo').addEventListener('click', function(e) {
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+            const nameSpan = document.querySelector('.company-name-mobile');
+            if (nameSpan) {
+                nameSpan.classList.toggle('show');
+            }
+        });
+        
+    </script>
+    
+    <!-- WhatsApp toggle script (if you have it in your file -->
+    <script>
+        // Fixed toggle functionality
+        (function() {
+            var toggleBtn = document.getElementById('whatsappToggle');
+            var whatsappBody = document.getElementById('whatsappBody');
+            var chevronIcon = toggleBtn ? toggleBtn.querySelector('.fa-chevron-down') : null;
+            
+            if (toggleBtn && whatsappBody) {
+                toggleBtn.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    
+                    if (whatsappBody.classList.contains('show')) {
+                        whatsappBody.classList.remove('show');
+                        if (chevronIcon) chevronIcon.style.transform = 'rotate(0deg)';
+                    } else {
+                        whatsappBody.classList.add('show');
+                        if (chevronIcon) chevronIcon.style.transform = 'rotate(180deg)';
+                    }
+                });
+                
+                document.addEventListener('click', function(event) {
+                    var widget = document.querySelector('.whatsapp-widget');
+                    if (widget && !widget.contains(event.target)) {
+                        whatsappBody.classList.remove('show');
+                        if (chevronIcon) chevronIcon.style.transform = 'rotate(0deg)';
+                    }
                 });
             }
-        });
-    });
- 
-</script>
+        })();
+    </script>
 </body>
 </html>
